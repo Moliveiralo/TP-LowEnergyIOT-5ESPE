@@ -39,28 +39,81 @@ volatile int expe = 0; //pour la sauvegarde du numéro de l'expérience
 int main(void)
 {
 
-  /*clock domains activation*/
-  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
-  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+	/*clock domains activation*/
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
 
-  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+	NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
-  // config GPIO
-  GPIO_init();
-  //config clock
-  SystemClock_Config_80M();
-  //config bus SPI1 (pour la communication avec le transceiver nRF24L01)
-  SPI1_Init();
-  //config USART2
-  USART2_Init();
+	// config GPIO
+	GPIO_init();
+	//config clock
+	SystemClock_Config_80M();
+	//config bus SPI1 (pour la communication avec le transceiver nRF24L01)
+	SPI1_Init();
+	//config USART2
+	USART2_Init();
 
-  // config systick avec interrupt
-  mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
+	// config systick avec interrupt
+	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
 
-  while (1)
-  {
+	//// PTX
+	//configuration du transceiver en mode PTX
+	Init_Transceiver();
+	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
+	Config_CRC(CRC_Field_On, CRC_Field_1byte);
+	//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
+	Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
+	Config_ESB_Protocol(nRF24_ARD_1000us,10);
+	//on sort du mode power down
+	nRF24_SetPowerMode(nRF24_PWR_UP);
+	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
 
-  }
+	//Entrée en mode TX
+	nRF24_SetOperationalMode(nRF24_MODE_TX);
+	StopListen();
+
+	//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
+	//mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
+	//on va partir sur une période de 100 ms
+	mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
+
+	int expNumber = 0;
+	    int packetNumber = 0;
+
+	    // 1 char = 1 octet, donc chaque message a une taille max de 32 char
+	    char messageToSend[33];  // 32 char + caractère de fin de chaîne
+
+	    // Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
+	    snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
+
+	    // Appel de la fonction Transmit_Message (exemple d'appel)
+	    Transmit_Message(messageToSend, 32);
+
+
+
+	//// PRX
+	//configuration du transceiver en mode PRX
+	Init_Transceiver();
+	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_12dBm);
+	Config_CRC(CRC_Field_On, CRC_Field_1byte);
+	Config_PRX_adress(5,nRF24_AA_ON,Default_pipe_address); //Adresse sur 5 bits
+	Config_ESB_Protocol(nRF24_ARD_500us,10);
+	//on sort du mode power down
+	nRF24_SetPowerMode(nRF24_PWR_UP);
+	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+
+	//Entrée en mode RX
+	nRF24_SetOperationalMode(nRF24_MODE_RX);
+	StartListen();
+
+	//Ecoute continue
+	Continuous_RX_Listen(500);
+
+	while (1)
+	{
+
+	}
 }
 
 // systick interrupt handler --> allumage LED toutes les 2 s pendant 50 ms.
@@ -72,11 +125,11 @@ void SysTick_Handler()
 	//scrutation bouton bleu
 	ticks += 1;
 	if	( BLUE_BUTTON() )
-		{
+	{
 		if	( old_blue == 0 )
 			blue_mode = 1;
 		old_blue = 1;
-		}
+	}
 	else 	old_blue = 0;
 
 	//gestion de l'allumage de la LED
@@ -87,35 +140,36 @@ void SysTick_Handler()
 		LED_GREEN(0);
 }
 
+//
 
 
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+	/* USER CODE BEGIN Error_Handler_Debug */
+	/* User can add his own implementation to report the HAL error return state */
 
-  /* USER CODE END Error_Handler_Debug */
+	/* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
+	/* USER CODE BEGIN 6 */
+	/* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+	/* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
 
