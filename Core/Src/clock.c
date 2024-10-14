@@ -58,6 +58,55 @@ void SystemClock_Config_80M()
 }
 
 
+void SystemClock_Config_Expe2()
+{
+	/* MSI configuration and activation */
+	LL_RCC_MSI_Enable();
+	while	(LL_RCC_MSI_IsReady() != 1)
+		{ }
+
+	/* Flash Latency + Voltage Scaling */
+	LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
+	LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+
+	//ne pas activer ni sélectionner comme source système la PLL
+
+
+    //changer la fréquence du MSI, en changeant de "Range"
+	//changer le code de 4 bits dans MSISRANGE[3:0] (registre RCC->CR)
+	RCC->CR &= ~(0xFF <<4);
+	RCC->CR |= (0x1001 <<4); //24MHz
+
+	//mettre a 1 le bit MSIRGSEL dans le même registre
+	RCC->CR &= ~(1 <<3);
+	RCC->CR |= (1 <<3);
+
+}
+
+void SystemClock_Config_ExpeReste()
+{
+	/* MSI configuration and activation */
+	LL_RCC_MSI_Enable();
+	while	(LL_RCC_MSI_IsReady() != 1)
+		{ }
+
+	/* Flash Latency + Voltage Scaling */
+	LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
+	LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE2);
+
+	//ne pas activer ni sélectionner comme source système la PLL
+
+
+	//changer la fréquence du MSI, en changeant de "Range"
+	//changer le code de 4 bits dans MSISRANGE[3:0] (registre RCC->CR)
+	RCC->CR &= ~(0xFF <<4);
+	RCC->CR |= (0x1001 <<4); //24MHz
+
+	//mettre a 1 le bit MSIRGSEL dans le même registre
+	RCC->CR &= ~(1 <<3);
+	RCC->CR |= (1 <<3);
+}
+
 // config systick avec interrupt. L'argument periode_en_ticks indique la période de débordement
 //du Systick, donnée en nombre de périodes du buc clock.
 void mySystick( unsigned int periode_en_ticks )
