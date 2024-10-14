@@ -57,7 +57,7 @@ uint8_t adr_data_pipe_used = 1; //numéro du data pipe utilisé pour la transmis
 
 int main(void)
 {
-    //// PTX
+    //// Commun aux 2 modes du tranceiver
     /*clock domains activation*/
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
@@ -73,6 +73,9 @@ int main(void)
     //config USART2
     USART2_Init();
 
+
+
+    //// PTX
     //configuration du transceiver en mode PTX
     Init_Transceiver();
     Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
@@ -88,29 +91,14 @@ int main(void)
     nRF24_SetOperationalMode(nRF24_MODE_TX);
     StopListen();
 
-
     //configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
     //mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
     //on va partir sur une période de 100 ms
     mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
 
 
+
     //// PRX
-    /*clock domains activation*/
-    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
-
-    NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
-    // config GPIO
-    GPIO_init();
-    //config clock
-    SystemClock_Config_80M();
-    //config bus SPI1 (pour la communication avec le transceiver nRF24L01)
-    SPI1_Init();
-    //config USART2
-    USART2_Init();
-
     //configuration du transceiver en mode PRX
     Init_Transceiver();
     Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_12dBm);
@@ -124,14 +112,14 @@ int main(void)
     //Entrée en mode RX
     nRF24_SetOperationalMode(nRF24_MODE_RX);
     StartListen();
+
     //Ecoute continue
     Continuous_RX_Listen(500);
 
 
-    //// Boucle infinie
-    while(1) {
 
-    }
+    //// Boucle infinie
+    while(1);
 
 }
 
