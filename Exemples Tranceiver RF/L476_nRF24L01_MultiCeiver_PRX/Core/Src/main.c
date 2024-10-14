@@ -72,7 +72,7 @@ int main(void)
   Config_ESB_Protocol(nRF24_ARD_500us,10);
   //on sort du mode power down
   nRF24_SetPowerMode(nRF24_PWR_UP);
-  Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down.
+  Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
 
   //Entrée en mode RX
   nRF24_SetOperationalMode(nRF24_MODE_RX);
