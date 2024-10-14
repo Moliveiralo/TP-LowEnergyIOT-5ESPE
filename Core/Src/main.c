@@ -140,7 +140,26 @@ void SysTick_Handler()
 		LED_GREEN(0);
 }
 
-//
+
+
+
+
+
+
+//EXPERIENCES routines
+
+//EXPERIENCE 1
+void Expe1()
+{
+	SCR->SLEEPDEEP |= (0<<2);
+	__WFI;
+}
+
+//EXPERIENCE 2
+void Expe2()
+{
+	SystemClock_Config_Expe2();
+}
 
 
 
