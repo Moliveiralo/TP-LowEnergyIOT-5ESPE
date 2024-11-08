@@ -175,6 +175,12 @@ void SysTick_Handler()
 
 
 //_______________________________FONCTIONS DES EXPERIENCES______________________________________//
+void configMsiLse(){
+    //Calibration MSI vs LSE
+    RCC->CR |= (1 << 2); // on met à 1 le bit MSIPLLEN de RCC_CR
+}
+
+
 void Expe1()
 {
     //Config clock deja faite
@@ -190,10 +196,18 @@ void Expe2()
 {
     //Config clock
     SystemClock_Config_MSI();
-
-    //Calibration MSI vs LSE
-    RCC->CR |= (1 << 2); //
 }
+
+void Expe2_blue(){
+	configMsiLse();
+}
+
+void Expe4_blue(){
+	configMsiLse();
+}
+
+
+
 
 //_____________________________________________________________________________________________//
 
