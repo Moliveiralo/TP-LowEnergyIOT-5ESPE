@@ -60,12 +60,12 @@ int main(void)
 	//config USART2
 	USART2_Init();
 	//Init to RTC
-	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN;
-	PWR->CR1 |= PWR_CR1_DBP;
-	RCC->BDCR |= RCC_BDCR_LSEON;
-	RCC->BDCR &= ~RCC_BDCR_RTCSEL;
+	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN; //Enable GRP1_CLOCK
+	PWR->CR1 |= PWR_CR1_DBP; //Enable BkUpAccess
+	RCC->BDCR |= RCC_BDCR_LSEON; //Enable RCC_LSE
+	RCC->BDCR &= ~RCC_BDCR_RTCSEL; //Set RTCClockSource
 	RCC->BDCR |= RCC_BDCR_RTCSEL_0;
-	RCC->BDCR |= RCC_BDCR_RTCEN;
+	RCC->BDCR |= RCC_BDCR_RTCEN; // Enable RTC
 
 	 expe= RTC->BKP0R;
 	 if ( 1 == RTC->BKP1R)
@@ -81,9 +81,39 @@ int main(void)
 	// config systick avec interrupt
 	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
 
+
 	while (1)
 	{
+		switch (expe)
+		{
+		case 0 :
 
+			break;
+		case 1 :
+
+			break;
+		case 2 :
+
+			break;
+		case 3 :
+
+			break;
+		case 4 :
+
+			break;
+		case 5 :
+
+			break;
+		case 6 :
+
+			break;
+		case 7 :
+
+			break;
+		default :
+			printf ("Out of Range");
+			break;
+		}
 	}
 }
 
@@ -102,7 +132,7 @@ void SysTick_Handler()
 		old_blue = 1;
 	}
 	else 	old_blue = 0;
-	RTC->BKP1R = old_blue;
+	RTC->BKP1R = old_blue; //on passe l ancient etat au deuxieme registre
 }
 
 
