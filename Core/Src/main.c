@@ -168,6 +168,27 @@ void SysTick_Handler()
 }
 
 
+//_______________________________FONCTIONS DES EXPERIENCES______________________________________//
+void Expe1()
+{
+    //Config clock deja faite
+	//Config mode sleep
+    SCB->SCR &= ~(1 << 2);  //SLEEPDEEP à 0
+    SCB->SCR |= (1 << 1);	//SLEEPEXIT à 1
+
+    //entree mode Sleep jusqua prochaine interrup
+    __WFI();  //attente interruption
+}
+
+void Expe2()
+{
+    //Config clock
+    SystemClock_Config_MSI();
+}
+
+//_____________________________________________________________________________________________//
+
+
 
 /**
  * @brief  This function is executed in case of error occurrence.
