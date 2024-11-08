@@ -60,8 +60,8 @@ all: main-build
 main-build: L476_LoPoSo_LEDBlink_2024.elf secondary-outputs
 
 # Tool invocations
-L476_LoPoSo_LEDBlink_2024.elf L476_LoPoSo_LEDBlink_2024.map: $(OBJS) $(USER_OBJS) C:\Users\yorgo\Desktop\5ESPE\file&project\TP-LowEnergyIOT-5ESPE\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "L476_LoPoSo_LEDBlink_2024.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\yorgo\Desktop\5ESPE\file&project\TP-LowEnergyIOT-5ESPE\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="L476_LoPoSo_LEDBlink_2024.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+L476_LoPoSo_LEDBlink_2024.elf L476_LoPoSo_LEDBlink_2024.map: $(OBJS) $(USER_OBJS) C:\Users\maxim\OneDrive\ -\ insa-toulouse.fr\INSA\Cours\5A\ -\ ESPE\Programmation\ faible\ énergie\ pour\ l'IOT\TP-LowEnergyIOT-5ESPE\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "L476_LoPoSo_LEDBlink_2024.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\maxim\OneDrive - insa-toulouse.fr\INSA\Cours\5A - ESPE\Programmation faible énergie pour l'IOT\TP-LowEnergyIOT-5ESPE\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="L476_LoPoSo_LEDBlink_2024.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
