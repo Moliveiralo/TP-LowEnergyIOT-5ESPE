@@ -60,95 +60,26 @@ int main(void)
 	//config USART2
 	USART2_Init();
 	//Init to RTC
-	LL_RTC_StructInit(&RTC_InitStruct);
-	LL_RTC_Init(RTC, &RTC_InitStruct);
+	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN;
+	PWR->CR1 |= PWR_CR1_DBP;
+	RCC->BDCR |= RCC_BDCR_LSEON;
+	RCC->BDCR &= ~RCC_BDCR_RTCSEL;
+	RCC->BDCR |= RCC_BDCR_RTCSEL_0;
+	RCC->BDCR |= RCC_BDCR_RTCEN;
+
+	 expe= RTC->BKP0R;
+	 if ( 1 == RTC->BKP1R)
+	 	{
+		 	 expe++;
+	 	}
+	 if ( 8 < expe)
+		{
+		 	 expe++;
+		}
+	RTC->BKP0R = expe;
+
 	// config systick avec interrupt
 	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
-	LL_RTC_BAK_SetRegister(RTC, 3, expe);
-	testing = LL_RTC_BAK_GetRegister(RTC, 3);
-	expe = LL_RTC_BAK_GetRegister(RTC, 3);
-	  // config systick avec interrupt
-	  mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
-	while (expe < 7)
-	{
-		status = BLUE_BUTTON();
-		if ( 1 == status)
-		{
-			LL_mDelay(100);
-			expe++;
-			LL_RTC_BAK_SetRegister(RTC, 3, expe);
-			testing = LL_RTC_BAK_GetRegister(RTC, 3);
-		}
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//	//// PTX
-//	//configuration du transceiver en mode PTX
-//	Init_Transceiver();
-//	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
-//	Config_CRC(CRC_Field_On, CRC_Field_1byte);
-//	//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
-//	Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
-//	Config_ESB_Protocol(nRF24_ARD_1000us,10);
-//	//on sort du mode power down
-//	nRF24_SetPowerMode(nRF24_PWR_UP);
-//	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
-//
-//	//Entrée en mode TX
-//	nRF24_SetOperationalMode(nRF24_MODE_TX);
-//	StopListen();
-//
-//	//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
-//	//mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
-//	//on va partir sur une période de 100 ms
-//	mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
-//
-//	int expNumber = 0;
-//	int packetNumber = 0;
-//
-//	// 1 char = 1 octet, donc chaque message a une taille max de 32 char
-//	char messageToSend[33];  // 32 char + caractère de fin de chaîne
-//
-//	// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
-//	snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
-//
-//	// Appel de la fonction Transmit_Message (exemple d'appel)
-//	Transmit_Message(messageToSend, 32);
-
-
-
-	//	//// PRX
-	//	//configuration du transceiver en mode PRX
-	//	Init_Transceiver();
-	//	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_12dBm);
-	//	Config_CRC(CRC_Field_On, CRC_Field_1byte);
-	//	Config_PRX_adress(5,nRF24_AA_ON,Default_pipe_address); //Adresse sur 5 bits
-	//	Config_ESB_Protocol(nRF24_ARD_500us,10);
-	//	//on sort du mode power down
-	//	nRF24_SetPowerMode(nRF24_PWR_UP);
-	//	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
-	//
-	//	//Entrée en mode RX
-	//	nRF24_SetOperationalMode(nRF24_MODE_RX);
-	//	StartListen();
-	//
-	//	//Ecoute continue
-	//	Continuous_RX_Listen(500);
 
 	while (1)
 	{
@@ -171,13 +102,7 @@ void SysTick_Handler()
 		old_blue = 1;
 	}
 	else 	old_blue = 0;
-
-	//gestion de l'allumage de la LED
-	subticks = ticks % 200;
-	if	( subticks == 0 )
-		LED_GREEN(1);
-	else if	( subticks == 5 )
-		LED_GREEN(0);
+	RTC->BKP1R = old_blue;
 }
 
 
