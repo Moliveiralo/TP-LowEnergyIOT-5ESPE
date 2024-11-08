@@ -190,6 +190,9 @@ void Expe2()
 {
     //Config clock
     SystemClock_Config_MSI();
+
+    //Calibration MSI vs LSE
+    RCC->CR |= (1 << 2); //
 }
 
 //_____________________________________________________________________________________________//
