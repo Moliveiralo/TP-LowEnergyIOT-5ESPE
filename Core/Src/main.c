@@ -40,6 +40,7 @@ volatile int old_blue = 0;
 volatile int expe = 0; //pour la sauvegarde du numéro de l'expérience
 uint32_t testing ;
 int status;
+LL_RTC_InitTypeDef RTC_InitStruct;
 
 uint8_t channel_nb = 60; //n° du canal radio utilisé (//channel 60 --> 2460 MHz)
 uint8_t adr_data_pipe_used = 1; //numéro du data pipe utilisé pour la transmission (de 0 à 5)
@@ -61,12 +62,11 @@ int main(void)
 	SPI1_Init();
 	//config USART2
 	USART2_Init();
-
+	//Init to RTC
+	LL_RTC_StructInit(&RTC_InitStruct);
+	LL_RTC_Init(RTC, &RTC_InitStruct);
 	// config systick avec interrupt
 	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
-
-	//Init to RTC
-	//LL_RTC_Init(RTC, &RTC_InitStruct);
 	LL_RTC_BAK_SetRegister(RTC, 3, expe);
 	testing = LL_RTC_BAK_GetRegister(RTC, 3);
 	expe = LL_RTC_BAK_GetRegister(RTC, 3);
