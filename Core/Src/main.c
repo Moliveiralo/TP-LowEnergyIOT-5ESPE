@@ -84,64 +84,64 @@ int main(void)
 		}
 	}
 
-	//// ----------------------------------------------------------------------------
-	//// 									PTX
-	//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
-	//// ----------------------------------------------------------------------------
-	//configuration du transceiver en mode PTX
-	Init_Transceiver();
-	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
-	Config_CRC(CRC_Field_On, CRC_Field_1byte);
-	//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
-	Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
-	Config_ESB_Protocol(nRF24_ARD_1000us,10);
-	//on sort du mode power down
-	nRF24_SetPowerMode(nRF24_PWR_UP);
-	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+//	//// ----------------------------------------------------------------------------
+//	//// 									PTX
+//	//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
+//	//// ----------------------------------------------------------------------------
+//	//configuration du transceiver en mode PTX
+//	Init_Transceiver();
+//	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
+//	Config_CRC(CRC_Field_On, CRC_Field_1byte);
+//	//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
+//	Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
+//	Config_ESB_Protocol(nRF24_ARD_1000us,10);
+//	//on sort du mode power down
+//	nRF24_SetPowerMode(nRF24_PWR_UP);
+//	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+//
+//	//Entrée en mode TX
+//	nRF24_SetOperationalMode(nRF24_MODE_TX);
+//	StopListen();
+//
+//	//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
+//	//mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
+//	//on va partir sur une période de 100 ms
+//	mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
+//
+//	int expNumber = 0;
+//	int packetNumber = 0;
+//
+//	// 1 char = 1 octet, donc chaque message a une taille max de 32 char
+//	char messageToSend[33];  // 32 char + caractère de fin de chaîne
+//
+//	// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
+//	snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
+//
+//	// Appel de la fonction Transmit_Message (exemple d'appel)
+//	Transmit_Message((uint8_t *)messageToSend, 32);
 
-	//Entrée en mode TX
-	nRF24_SetOperationalMode(nRF24_MODE_TX);
-	StopListen();
-
-	//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
-	//mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
-	//on va partir sur une période de 100 ms
-	mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
-
-	int expNumber = 0;
-	int packetNumber = 0;
-
-	// 1 char = 1 octet, donc chaque message a une taille max de 32 char
-	char messageToSend[33];  // 32 char + caractère de fin de chaîne
-
-	// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
-	snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
-
-	// Appel de la fonction Transmit_Message (exemple d'appel)
-	Transmit_Message((uint8_t *)messageToSend, 32);
 
 
-
-	//// ----------------------------------------------------------------------------
-	//// 									PRX
-	//// 				RECEPTION DE MESSAGES VIA LE TRANCEIVER RF
-	//// ----------------------------------------------------------------------------
-	//configuration du transceiver en mode PRX
-	Init_Transceiver();
-	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_12dBm);
-	Config_CRC(CRC_Field_On, CRC_Field_1byte);
-	Config_PRX_adress(5,nRF24_AA_ON,Default_pipe_address); //Adresse sur 5 bits
-	Config_ESB_Protocol(nRF24_ARD_500us,10);
-	//on sort du mode power down
-	nRF24_SetPowerMode(nRF24_PWR_UP);
-	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
-
-	//Entrée en mode RX
-	nRF24_SetOperationalMode(nRF24_MODE_RX);
-	StartListen();
-
-	//Ecoute continue
-	Continuous_RX_Listen(500);
+//	//// ----------------------------------------------------------------------------
+//	//// 									PRX
+//	//// 				RECEPTION DE MESSAGES VIA LE TRANCEIVER RF
+//	//// ----------------------------------------------------------------------------
+//	//configuration du transceiver en mode PRX
+//	Init_Transceiver();
+//	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_12dBm);
+//	Config_CRC(CRC_Field_On, CRC_Field_1byte);
+//	Config_PRX_adress(5,nRF24_AA_ON,Default_pipe_address); //Adresse sur 5 bits
+//	Config_ESB_Protocol(nRF24_ARD_500us,10);
+//	//on sort du mode power down
+//	nRF24_SetPowerMode(nRF24_PWR_UP);
+//	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+//
+//	//Entrée en mode RX
+//	nRF24_SetOperationalMode(nRF24_MODE_RX);
+//	StartListen();
+//
+//	//Ecoute continue
+//	Continuous_RX_Listen(500);
 
 	while (1)
 	{
