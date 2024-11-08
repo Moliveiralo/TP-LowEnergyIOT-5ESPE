@@ -70,8 +70,8 @@ int main(void)
 	LL_RTC_BAK_SetRegister(RTC, 3, expe);
 	testing = LL_RTC_BAK_GetRegister(RTC, 3);
 	expe = LL_RTC_BAK_GetRegister(RTC, 3);
-	  // config systick avec interrupt
-	  mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
+	// config systick avec interrupt
+	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
 	while (expe < 7)
 	{
 		status = BLUE_BUTTON();
@@ -84,7 +84,10 @@ int main(void)
 		}
 	}
 
-	//// PTX
+	//// ----------------------------------------------------------------------------
+	//// 									PTX
+	//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
+	//// ----------------------------------------------------------------------------
 	//configuration du transceiver en mode PTX
 	Init_Transceiver();
 	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
@@ -119,23 +122,26 @@ int main(void)
 
 
 
-		//// PRX
-		//configuration du transceiver en mode PRX
-		Init_Transceiver();
-		Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_12dBm);
-		Config_CRC(CRC_Field_On, CRC_Field_1byte);
-		Config_PRX_adress(5,nRF24_AA_ON,Default_pipe_address); //Adresse sur 5 bits
-		Config_ESB_Protocol(nRF24_ARD_500us,10);
-		//on sort du mode power down
-		nRF24_SetPowerMode(nRF24_PWR_UP);
-		Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+	//// ----------------------------------------------------------------------------
+	//// 									PRX
+	//// 				RECEPTION DE MESSAGES VIA LE TRANCEIVER RF
+	//// ----------------------------------------------------------------------------
+	//configuration du transceiver en mode PRX
+	Init_Transceiver();
+	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_12dBm);
+	Config_CRC(CRC_Field_On, CRC_Field_1byte);
+	Config_PRX_adress(5,nRF24_AA_ON,Default_pipe_address); //Adresse sur 5 bits
+	Config_ESB_Protocol(nRF24_ARD_500us,10);
+	//on sort du mode power down
+	nRF24_SetPowerMode(nRF24_PWR_UP);
+	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
 
-		//Entrée en mode RX
-		nRF24_SetOperationalMode(nRF24_MODE_RX);
-		StartListen();
+	//Entrée en mode RX
+	nRF24_SetOperationalMode(nRF24_MODE_RX);
+	StartListen();
 
-		//Ecoute continue
-		Continuous_RX_Listen(500);
+	//Ecoute continue
+	Continuous_RX_Listen(500);
 
 	while (1)
 	{
