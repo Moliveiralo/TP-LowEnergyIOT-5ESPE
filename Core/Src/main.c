@@ -223,31 +223,65 @@ void configMsiLse(){
     RCC->CR |= (1 << 2); // on met à 1 le bit MSIPLLEN de RCC_CR
 }
 
+void Sleep()
+{
+	//Config mode sleep
+	SCB->SCR &= ~(1 << 2);  //SLEEPDEEP à 0
+	SCB->SCR |= (1 << 1);	//SLEEPEXIT à 1
+
+	//entree mode Sleep jusqua prochaine interrup
+	__WFI();  //attente interruption
+
+	//sortie du sleep mode avec le reset
+}
 
 void Expe1()
 {
     //Config clock deja faite
-	//Config mode sleep
-    SCB->SCR &= ~(1 << 2);  //SLEEPDEEP à 0
-    SCB->SCR |= (1 << 1);	//SLEEPEXIT à 1
-
-    //entree mode Sleep jusqua prochaine interrup
-    __WFI();  //attente interruption
+	//Mode sleep
+	Sleep();
 }
 
-void Expe2()
+void Expe2(){
+	//Config clock
+	SystemClock_Config_Expe2();
+
+	//Config MSI
+	configMsiLse();
+}
+
+void Expe3()
 {
-    //Config clock
-    SystemClock_Config_MSI();
+	Sleep();
 }
 
-void Expe2_blue(){
+
+void Expe4(){
+	//Config clock
+	SystemClock_Config_ExpeReste();
+
+	//Config MSI
 	configMsiLse();
 }
 
-void Expe4_blue(){
-	configMsiLse();
+void Expe5()
+{
+	//Config clock
+	SystemClock_Config_ExpeReste();
+	//Config mode sleep
+	SCB->SCR |= (1 << 2);	//SLEEPDEEP à 1
+
+	//Mode STOP0
+	PWR->CR &= ~(1 << 2);
+
+	__WFI();
 }
+
+
+
+
+
+
 
 
 
