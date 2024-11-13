@@ -77,7 +77,7 @@ int main(void)
 	 	}
 	 if ( 8 < expe)
 		{
-		 	 expe++;
+		 	 expe=0;
 		}
 	RTC->BKP0R = expe;
 
@@ -167,28 +167,54 @@ int main(void)
 	{
 		switch (expe)
 		{
-		case 0 : Expe1();
+		case 0 :
+			break;
+		case 1 :
+
+			//Config clock deja faite
+			//Mode sleep
+			Sleep();
+
+		case 2 :
+
+			//Config clock
+			SystemClock_Config_Expe2();
+			//Config MSI
+			configMsiLse();
 
 			break;
-		case 1 : Expe2();
+		case 3 :
+
+			SystemClock_Config_ExpeReste();
+			Sleep();
 
 			break;
-		case 2 : Expe3();
+		case 4 :
+
+			//Config clock
+			SystemClock_Config_ExpeReste();
+			//Config MSI
+			configMsiLse();
 
 			break;
-		case 3 : Expe4();
+		case 5 :
+
+			//Config clock
+			//SystemClock_Config_ExpeReste();
+			//Config mode sleep
+			//SCB->SCR |= (1 << 2);	//SLEEPDEEP à 1
+			//Mode STOP0
+			//PWR->CR &= ~(1 << 2);
+			//__WFI();
 
 			break;
-		case 4 : Expe5();
+		case 6 :
 
 			break;
-		case 5 : Expe6();
+		case 7 :
 
 			break;
-		case 6 : Expe7();
-
-			break;
-		case 7 : Expe8();
+		case 8 :
 
 			break;
 		default :
@@ -214,6 +240,7 @@ void SysTick_Handler()
 	}
 	else 	old_blue = 0;
 	RTC->BKP1R = old_blue; //on passe l ancient etat au deuxieme registre
+	LED_GREEN(1);
 }
 
 
@@ -234,55 +261,6 @@ void Sleep()
 
 	//sortie du sleep mode avec le reset
 }
-
-void Expe1()
-{
-    //Config clock deja faite
-	//Mode sleep
-	Sleep();
-}
-
-void Expe2(){
-	//Config clock
-	SystemClock_Config_Expe2();
-
-	//Config MSI
-	configMsiLse();
-}
-
-void Expe3()
-{
-	Sleep();
-}
-
-
-void Expe4(){
-	//Config clock
-	SystemClock_Config_ExpeReste();
-
-	//Config MSI
-	configMsiLse();
-}
-
-void Expe5()
-{
-	//Config clock
-	SystemClock_Config_ExpeReste();
-	//Config mode sleep
-	SCB->SCR |= (1 << 2);	//SLEEPDEEP à 1
-
-	//Mode STOP0
-	PWR->CR &= ~(1 << 2);
-
-	__WFI();
-}
-
-
-
-
-
-
-
 
 
 
