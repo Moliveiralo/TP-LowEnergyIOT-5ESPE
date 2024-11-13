@@ -111,7 +111,7 @@ int main(void)
 
 			break;
 		default :
-			printf ("Out of Range");
+			//printf ("Out of Range");
 			break;
 		}
 	}
@@ -121,7 +121,7 @@ int main(void)
 //Scrutation de l'état du bouton bleu  (pas d'action à ce stade).
 void SysTick_Handler()
 {
-	unsigned int subticks;
+	//unsigned int subticks;
 
 	//scrutation bouton bleu
 	ticks += 1;
