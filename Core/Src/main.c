@@ -167,28 +167,28 @@ int main(void)
 	{
 		switch (expe)
 		{
-		case 0 :
+		case 0 : Expe1();
 
 			break;
-		case 1 :
+		case 1 : Expe2();
 
 			break;
-		case 2 :
+		case 2 : Expe3();
 
 			break;
-		case 3 :
+		case 3 : Expe4();
 
 			break;
-		case 4 :
+		case 4 : Expe5();
 
 			break;
-		case 5 :
+		case 5 : Expe6();
 
 			break;
-		case 6 :
+		case 6 : Expe7();
 
 			break;
-		case 7 :
+		case 7 : Expe8();
 
 			break;
 		default :
