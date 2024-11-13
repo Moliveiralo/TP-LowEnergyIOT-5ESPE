@@ -63,26 +63,46 @@ int main(void)
 	//config USART2
 	USART2_Init();
 	//Init to RTC
-	LL_RTC_StructInit(&RTC_InitStruct);
-	LL_RTC_Init(RTC, &RTC_InitStruct);
-	// config systick avec interrupt
-	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
-	LL_RTC_BAK_SetRegister(RTC, 3, expe);
-	testing = LL_RTC_BAK_GetRegister(RTC, 3);
-	expe = LL_RTC_BAK_GetRegister(RTC, 3);
-	// config systick avec interrupt
-	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
-	while (expe < 7)
-	{
-		status = BLUE_BUTTON();
-		if ( 1 == status)
+	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN; //Enable GRP1_CLOCK
+	PWR->CR1 |= PWR_CR1_DBP; //Enable BkUpAccess
+	RCC->BDCR |= RCC_BDCR_LSEON; //Enable RCC_LSE
+	RCC->BDCR &= ~RCC_BDCR_RTCSEL; //Set RTCClockSource
+	RCC->BDCR |= RCC_BDCR_RTCSEL_0;
+	RCC->BDCR |= RCC_BDCR_RTCEN; // Enable RTC
+
+	 expe= RTC->BKP0R;
+	 if ( 1 == RTC->BKP1R)
+	 	{
+		 	 expe++;
+	 	}
+	 if ( 8 < expe)
 		{
-			LL_mDelay(100);
-			expe++;
-			LL_RTC_BAK_SetRegister(RTC, 3, expe);
-			testing = LL_RTC_BAK_GetRegister(RTC, 3);
+		 	 expe++;
 		}
-	}
+	RTC->BKP0R = expe;
+
+	// config systick avec interrupt
+	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
+
+
+
+
+	// LL_RTC_BAK_SetRegister(RTC, 3, expe);
+	// testing = LL_RTC_BAK_GetRegister(RTC, 3);
+	// expe = LL_RTC_BAK_GetRegister(RTC, 3);
+	// // config systick avec interrupt
+	// mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
+	// while (expe < 7)
+	// {
+	// 	status = BLUE_BUTTON();
+	// 	if ( 1 == status)
+	// 	{
+	// 		LL_mDelay(100);
+	// 		expe++;
+	// 		LL_RTC_BAK_SetRegister(RTC, 3, expe);
+	// 		testing = LL_RTC_BAK_GetRegister(RTC, 3);
+	// 	}
+	// }
 
 //	//// ----------------------------------------------------------------------------
 //	//// 									PTX
@@ -145,7 +165,36 @@ int main(void)
 
 	while (1)
 	{
+		switch (expe)
+		{
+		case 0 :
 
+			break;
+		case 1 :
+
+			break;
+		case 2 :
+
+			break;
+		case 3 :
+
+			break;
+		case 4 :
+
+			break;
+		case 5 :
+
+			break;
+		case 6 :
+
+			break;
+		case 7 :
+
+			break;
+		default :
+			//printf ("Out of Range");
+			break;
+		}
 	}
 }
 
@@ -153,7 +202,7 @@ int main(void)
 //Scrutation de l'état du bouton bleu  (pas d'action à ce stade).
 void SysTick_Handler()
 {
-	unsigned int subticks;
+	//unsigned int subticks;
 
 	//scrutation bouton bleu
 	ticks += 1;
@@ -164,13 +213,7 @@ void SysTick_Handler()
 		old_blue = 1;
 	}
 	else 	old_blue = 0;
-
-	//gestion de l'allumage de la LED
-	subticks = ticks % 200;
-	if	( subticks == 0 )
-		LED_GREEN(1);
-	else if	( subticks == 5 )
-		LED_GREEN(0);
+	RTC->BKP1R = old_blue; //on passe l ancient etat au deuxieme registre
 }
 
 
