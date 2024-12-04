@@ -48,7 +48,14 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "clock.h"
+#include "fonction_app.h"
+#include "main.h"
+#include "gpio.h"
+#include "spi.h"
+#include "usart.h"
+#include "nrf24.h"
+#include "RadioFunctions.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
