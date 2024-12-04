@@ -129,22 +129,22 @@ int main(void)
 		}
 		if (expe == 5) {
 			if (blue_mode){
-				null;
+				//null;
 			}
 		}
 		if (expe == 6) {
 			if (blue_mode){
-				null;
+				//null;
 			}
 		}
 		if (expe == 7) {
 			if (blue_mode){
-				null;
+				//null;
 			}
 		}
 		if (expe == 8) {
 			if (blue_mode){
-				null;
+				//null;
 			}
 		}
 	}
