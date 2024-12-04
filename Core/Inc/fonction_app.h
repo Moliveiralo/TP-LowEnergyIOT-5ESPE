@@ -28,5 +28,7 @@
 
 void cold_start();
 void hot_start();
+void  Sleep();
+void configMsiLse();
 
 #endif /* INC_FONCTION_APP_H_ */

@@ -56,3 +56,20 @@ void hot_start(){
 
 	    }
 }
+
+void configMsiLse(){
+    //Calibration MSI vs LSE
+    RCC->CR |= (1 << 2); // on met à 1 le bit MSIPLLEN de RCC_CR
+}
+
+void Sleep()
+{
+	//Config mode sleep
+	SCB->SCR &= ~(1 << 2);  //SLEEPDEEP à 0
+	SCB->SCR |= (1 << 1);	//SLEEPEXIT à 1
+
+	//entree mode Sleep jusqua prochaine interrup
+	__WFI();  //attente interruption
+
+	//sortie du sleep mode avec le reset
+}
