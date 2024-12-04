@@ -82,42 +82,79 @@ int main(void)
 	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
 
 	if (expe == 1) {
-			//SystemClock_Config_exp1();
+		SystemClock_Config_80M();
+	}
+	if (expe == 2) {
+		SystemClock_Config_Expe2();
+	}
+	if (expe == 3) {
+		SystemClock_Config_ExpeReste();
 
-		}
-		if (expe == 2) {
-			//SystemClock_Config_exp2();
+	}
+	if (expe ==4){ //expe3 bis car non realise
+		SystemClock_Config_ExpeReste();
 
-		}
-		if (expe == 3) {
-			//SystemClock_Config_exp3();
+	}
+	if (expe == 5) {
+		SystemClock_Config_ExpeReste();
 
-		}
-		if (expe ==4){ //expe3 bis car non realise
-			//SystemClock_Config_exp4();
+	}
+	if (expe == 6) {
+		SystemClock_Config_ExpeReste();
 
-		}
-		if (expe == 5) {
-			//SystemClock_Config_exp5();
+	}
+	if (expe == 7) {
+		SystemClock_Config_ExpeReste();
 
-		}
-		if (expe == 6) {
-			//SystemClock_Config_exp5();
+	}
+	if (expe == 8) {
+		SystemClock_Config_ExpeReste();
 
-		}
-		if (expe == 7) {
-			//SystemClock_Config_exp5();
-
-		}
-		if (expe == 8) {
-			//SystemClock_Config_exp5();
-
-		}
+	}
 
 	while (1)
-		{
-
+	{
+		if (expe == 1) {
+			if (blue_mode){
+				Sleep();
+			}
 		}
+		if (expe == 2) {
+			if (blue_mode){
+				configMsiLse();
+			}
+		}
+		if (expe == 3) {
+			if (blue_mode){
+				Sleep();
+			}
+		}
+		if (expe ==4){
+			if (blue_mode){
+				configMsiLse();
+			}
+		}
+		if (expe == 5) {
+			if (blue_mode){
+				null;
+			}
+		}
+		if (expe == 6) {
+			if (blue_mode){
+				null;
+			}
+		}
+		if (expe == 7) {
+			if (blue_mode){
+				null;
+			}
+		}
+		if (expe == 8) {
+			if (blue_mode){
+				null;
+			}
+		}
+	}
 }
 // systick interrupt handler --> allumage LED toutes les 2 s pendant 50 ms.
 //Scrutation de l'état du bouton bleu  (pas d'action à ce stade).
