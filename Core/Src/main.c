@@ -170,10 +170,11 @@ int main(void)
 		case 0 :
 			break;
 		case 1 :
-
+			if (Blue_Mode){
 			//Config clock deja faite
 			//Mode sleep
 			Sleep();
+			}
 
 		case 2 :
 
