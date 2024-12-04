@@ -45,15 +45,22 @@ LL_RTC_InitTypeDef RTC_InitStruct;
 uint8_t channel_nb = 60; //n° du canal radio utilisé (//channel 60 --> 2460 MHz)
 uint8_t adr_data_pipe_used = 1; //numéro du data pipe utilisé pour la transmission (de 0 à 5)
 
+void expe_counter() {
+
+	if (BLUE_BUTTON()) {
+		expe = LL_RTC_BAK_GetRegister(RTC, LL_RTC_BKP_DR0);
+		if (9 == expe){ expe = 1; }
+		LL_RTC_BAK_SetRegister(RTC, LL_RTC_BKP_DR0, expe);
+	}
+}
+
+
 int main(void)
 {
 
 	/*clock domains activation*/
 	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
 	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
-
-	NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
 	// config GPIO
 	GPIO_init();
 	//config clock
@@ -62,170 +69,56 @@ int main(void)
 	SPI1_Init();
 	//config USART2
 	USART2_Init();
-	//Init to RTC
-	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN; //Enable GRP1_CLOCK
-	PWR->CR1 |= PWR_CR1_DBP; //Enable BkUpAccess
-	RCC->BDCR |= RCC_BDCR_LSEON; //Enable RCC_LSE
-	RCC->BDCR &= ~RCC_BDCR_RTCSEL; //Set RTCClockSource
-	RCC->BDCR |= RCC_BDCR_RTCSEL_0;
-	RCC->BDCR |= RCC_BDCR_RTCEN; // Enable RTC
 
-	 expe= RTC->BKP0R;
-	 if ( 1 == RTC->BKP1R)
-	 	{
-		 	 expe++;
-	 	}
-	 if ( 8 < expe)
-		{
-		 	 expe=0;
-		}
-	RTC->BKP0R = expe;
+	NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+	if (LL_RCC_LSE_IsReady() == 1) {
+		hot_start();
+	} else {
+		cold_start();
+	}
+	expe_counter();
 
 	// config systick avec interrupt
 	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
 
+	if (expe == 1) {
+			//SystemClock_Config_exp1();
 
+		}
+		if (expe == 2) {
+			//SystemClock_Config_exp2();
 
+		}
+		if (expe == 3) {
+			//SystemClock_Config_exp3();
 
-	// LL_RTC_BAK_SetRegister(RTC, 3, expe);
-	// testing = LL_RTC_BAK_GetRegister(RTC, 3);
-	// expe = LL_RTC_BAK_GetRegister(RTC, 3);
-	// // config systick avec interrupt
-	// mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
-	// while (expe < 7)
-	// {
-	// 	status = BLUE_BUTTON();
-	// 	if ( 1 == status)
-	// 	{
-	// 		LL_mDelay(100);
-	// 		expe++;
-	// 		LL_RTC_BAK_SetRegister(RTC, 3, expe);
-	// 		testing = LL_RTC_BAK_GetRegister(RTC, 3);
-	// 	}
-	// }
+		}
+		if (expe ==4){ //expe3 bis car non realise
+			//SystemClock_Config_exp4();
 
-	//// ----------------------------------------------------------------------------
-	//// 									PTX
-	//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
-	//// ----------------------------------------------------------------------------
+		}
+		if (expe == 5) {
+			//SystemClock_Config_exp5();
 
-	//configuration du transceiver en mode PTX
-	Init_Transceiver();
-	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
-	Config_CRC(CRC_Field_On, CRC_Field_1byte);
-	//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
-	Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
-	Config_ESB_Protocol(nRF24_ARD_1000us,10);
-	//on sort du mode power down
-	nRF24_SetPowerMode(nRF24_PWR_UP);
-	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+		}
+		if (expe == 6) {
+			//SystemClock_Config_exp5();
 
-	//Entrée en mode TX
-	nRF24_SetOperationalMode(nRF24_MODE_TX);
-	StopListen();
+		}
+		if (expe == 7) {
+			//SystemClock_Config_exp5();
 
-	//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
-	//mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
-	//on va partir sur une période de 100 ms
-	mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
+		}
+		if (expe == 8) {
+			//SystemClock_Config_exp5();
 
-	int expNumber = 0;
-	int packetNumber = 0;
-
-	// 1 char = 1 octet, donc chaque message a une taille max de 32 char
-	char messageToSend[33];  // 32 char + caractère de fin de chaîne
-
-	// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
-	snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
-
-	// Appel de la fonction Transmit_Message (exemple d'appel)
-	Transmit_Message((uint8_t *)messageToSend, 32);
-
-
-
-//	//// ----------------------------------------------------------------------------
-//	//// 									PRX
-//	//// 				RECEPTION DE MESSAGES VIA LE TRANCEIVER RF
-//	//// ----------------------------------------------------------------------------
-//	//configuration du transceiver en mode PRX
-//	Init_Transceiver();
-//	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_12dBm);
-//	Config_CRC(CRC_Field_On, CRC_Field_1byte);
-//	Config_PRX_adress(5,nRF24_AA_ON,Default_pipe_address); //Adresse sur 5 bits
-//	Config_ESB_Protocol(nRF24_ARD_500us,10);
-//	//on sort du mode power down
-//	nRF24_SetPowerMode(nRF24_PWR_UP);
-//	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
-//
-//	//Entrée en mode RX
-//	nRF24_SetOperationalMode(nRF24_MODE_RX);
-//	StartListen();
-//
-//	//Ecoute continue
-//	Continuous_RX_Listen(500);
+		}
 
 	while (1)
-	{
-		switch (expe)
 		{
-		case 0 :
-			break;
-		case 1 :
-			if (Blue_Mode){
-			//Config clock deja faite
-			//Mode sleep
-			Sleep();
-			}
 
-		case 2 :
-
-			//Config clock
-			SystemClock_Config_Expe2();
-			//Config MSI
-			configMsiLse();
-
-			break;
-		case 3 :
-
-			SystemClock_Config_ExpeReste();
-			Sleep();
-
-			break;
-		case 4 :
-
-			//Config clock
-			SystemClock_Config_ExpeReste();
-			//Config MSI
-			configMsiLse();
-
-			break;
-		case 5 :
-
-			//Config clock
-			//SystemClock_Config_ExpeReste();
-			//Config mode sleep
-			//SCB->SCR |= (1 << 2);	//SLEEPDEEP à 1
-			//Mode STOP0
-			//PWR->CR &= ~(1 << 2);
-			//__WFI();
-
-			break;
-		case 6 :
-
-			break;
-		case 7 :
-
-			break;
-		case 8 :
-
-			break;
-		default :
-			//printf ("Out of Range");
-			break;
 		}
-	}
 }
-
 // systick interrupt handler --> allumage LED toutes les 2 s pendant 50 ms.
 //Scrutation de l'état du bouton bleu  (pas d'action à ce stade).
 void SysTick_Handler()
@@ -238,24 +131,9 @@ void SysTick_Handler()
 	{
 		if	( old_blue == 0 )
 			blue_mode = 1;
-		old_blue = 1;
+
 	}
 	else 	old_blue = 0;
-	RTC->BKP1R = old_blue; //on passe l ancient etat au deuxieme registre
-	LED_GREEN(1);
-
-
-	int expNumber = 0;
-	int packetNumber = 0;
-
-	// 1 char = 1 octet, donc chaque message a une taille max de 32 char
-	char messageToSend[33];  // 32 char + caractère de fin de chaîne
-
-	// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
-	snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
-
-	// Appel de la fonction Transmit_Message (exemple d'appel)
-	Transmit_Message((uint8_t *)messageToSend, 32);
 }
 
 
@@ -278,6 +156,59 @@ void Sleep()
 }
 
 
+
+
+
+
+void cold_start(){
+
+	    LL_PWR_EnableBkUpAccess();
+
+	    // 3. Effectuer un reset du backup domain (réinitialisation des registres de sauvegarde)
+	    LL_RCC_ForceBackupDomainReset();
+	    LL_RCC_ReleaseBackupDomainReset();
+
+	    // 4. Démarrer l'oscillateur LSE (Low Speed External)
+	    LL_RCC_LSE_Enable();
+	    while (LL_RCC_LSE_IsReady() != 1);  // Attendre que l'oscillateur LSE soit prêt
+
+	    // 5. Configurer les prescalers du RTC (asynchrone et synchrone)
+	    // Désactiver la protection en écriture des registres RTC
+	    LL_RTC_DisableWriteProtection(RTC);
+
+	    // Configurer les prescalers
+	    LL_RTC_SetAsynchPrescaler(RTC, 0x7F);  // Valeur de prescaler asynchrone (à ajuster selon votre besoin)
+	    LL_RTC_SetSynchPrescaler(RTC, 0xFF);   // Valeur de prescaler synchrone (à ajuster selon votre besoin)
+
+	    // 6. Réactiver la protection en écriture des registres RTC
+	    LL_RTC_EnableWriteProtection(RTC);
+}
+
+
+void hot_start(){
+	 LL_PWR_EnableBkUpAccess();
+
+	    // 3. Initialiser l'interface RTC-MPU avant d'accéder aux backup-registers
+	    // L'interface RTC-MPU est automatiquement désactivée au démarrage, donc on l'active ici
+	    LL_RCC_EnableRTC();
+
+	    // 4. Vérifier si l'oscillateur LSE est prêt, sinon attendre
+	    if (LL_RCC_LSE_IsReady() != 1) {
+	        LL_RCC_LSE_Enable();
+	        while (LL_RCC_LSE_IsReady() != 1);  // Attendre que l'oscillateur LSE soit prêt
+	    }
+
+	    // 5. Si nécessaire, configurer les prescalers RTC à ce moment-là
+	    // (Cela peut ne pas être nécessaire à chaque démarrage "à chaud")
+	    // Si vous avez besoin de reconfigurer les prescalers, il faut désactiver la protection et les reconfigurer.
+	    if (!LL_RTC_IsActiveFlag_INITS(RTC)) {
+	        LL_RTC_DisableWriteProtection(RTC);  // Désactiver la protection en écriture
+	        LL_RTC_SetAsynchPrescaler(RTC, 0x7F); // Configurer les prescalers (exemple)
+	        LL_RTC_SetSynchPrescaler(RTC, 0xFF);  // Configurer les prescalers (exemple)
+	        LL_RTC_EnableWriteProtection(RTC);   // Réactiver la protection
+
+	    }
+}
 
 //_____________________________________________________________________________________________//
 
@@ -312,4 +243,201 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
+
+// partie commune a toutes les utilisations du wakeup timer
+void RTC_wakeup_init( int delay )
+{
+LL_RTC_DisableWriteProtection( RTC );
+LL_RTC_WAKEUP_Disable( RTC );
+while	( !LL_RTC_IsActiveFlag_WUTW( RTC ) )
+	{ }
+// connecter le timer a l'horloge 1Hz de la RTC
+LL_RTC_WAKEUP_SetClock( RTC, LL_RTC_WAKEUPCLOCK_CKSPRE );
+// fixer la duree de temporisation
+LL_RTC_WAKEUP_SetAutoReload( RTC, delay );	// 16 bits
+LL_RTC_ClearFlag_WUT(RTC);
+LL_RTC_EnableIT_WUT(RTC);
+LL_RTC_WAKEUP_Enable(RTC);
+LL_RTC_EnableWriteProtection(RTC);
+}
+
+// Dans le cas des modes STANDBY et SHUTDOWN, le MPU sera reveille par reset
+// causé par 1 wakeup line (interne ou externe) (le NVIC n'est plus alimenté)
+void RTC_wakeup_init_from_standby_or_shutdown( int delay )
+{
+RTC_wakeup_init( delay );
+// enable the Internal Wake-up line
+LL_PWR_EnableInternWU();	// ceci ne concerne que Standby et Shutdown, pas STOPx
+}
+
+// Dans le cas des modes STOPx, le MPU sera reveille par interruption
+// le module EXTI et une partie du NVIC sont encore alimentes
+// le contenu de la RAM et des registres étant préservé, le MPU
+// reprend l'execution après l'instruction WFI
+void RTC_wakeup_init_from_stop( int delay )
+{
+RTC_wakeup_init( delay );
+// valider l'interrupt par la ligne 20 du module EXTI, qui est réservée au wakeup timer
+LL_EXTI_EnableIT_0_31( LL_EXTI_LINE_20 );
+LL_EXTI_EnableRisingTrig_0_31( LL_EXTI_LINE_20 );
+// valider l'interrupt chez NVIC
+NVIC_SetPriority( RTC_WKUP_IRQn, 1 );
+NVIC_EnableIRQ( RTC_WKUP_IRQn );
+}
+
+// wakeup timer interrupt Handler (inutile mais doit etre defini)
+void RTC_WKUP_IRQHandler() {
+	LL_EXTI_ClearFlag_0_31( LL_EXTI_LINE_20);
+}
+
+
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+
+
+//	RTC AVEC REGISTER
+//	//Init to RTC
+//	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN; //Enable GRP1_CLOCK
+//	PWR->CR1 |= PWR_CR1_DBP; //Enable BkUpAccess
+//	RCC->BDCR |= RCC_BDCR_LSEON; //Enable RCC_LSE
+//	RCC->BDCR &= ~RCC_BDCR_RTCSEL; //Set RTCClockSource
+//	RCC->BDCR |= RCC_BDCR_RTCSEL_0;
+//	RCC->BDCR |= RCC_BDCR_RTCEN; // Enable RTC
+//
+//	 expe= RTC->BKP0R;
+//	 if ( 1 == RTC->BKP1R)
+//	 	{
+//		 	 expe++;
+//	 	}
+//	 if ( 8 < expe)
+//		{
+//		 	 expe++;
+//		}
+//	RTC->BKP0R = expe;
+
+
+
+// LL_RTC_BAK_SetRegister(RTC, 3, expe);
+// testing = LL_RTC_BAK_GetRegister(RTC, 3);
+// expe = LL_RTC_BAK_GetRegister(RTC, 3);
+// // config systick avec interrupt
+// mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
+// while (expe < 7)
+// {
+// 	status = BLUE_BUTTON();
+// 	if ( 1 == status)
+// 	{
+// 		LL_mDelay(100);
+// 		expe++;
+// 		LL_RTC_BAK_SetRegister(RTC, 3, expe);
+// 		testing = LL_RTC_BAK_GetRegister(RTC, 3);
+// 	}
+// }
+
+
+//void Expe1()
+//{
+//    //Config clock deja faite
+//	//Mode sleep
+//	Sleep();
+//}
+//
+//void Expe2(){
+//	//Config clock
+//	SystemClock_Config_Expe2();
+//
+//	//Config MSI
+//	configMsiLse();
+//}
+//
+//void Expe3()
+//{
+//	Sleep();
+//}
+//
+//
+//void Expe4(){
+//	//Config clock
+//	SystemClock_Config_ExpeReste();
+//
+//	//Config MSI
+//	configMsiLse();
+//}
+//
+//void Expe5()
+//{
+//	//Config clock
+//	SystemClock_Config_ExpeReste();
+//	//Config mode sleep
+//	SCB->SCR |= (1 << 2);	//SLEEPDEEP à 1
+//
+//	//Mode STOP0
+//	PWR->CR &= ~(1 << 2);
+//
+//	__WFI();
+//}
+
+
+
+
+
+
+//	//// ----------------------------------------------------------------------------
+//	//// 									PTX
+//	//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
+//	//// ----------------------------------------------------------------------------
+//	//configuration du transceiver en mode PTX
+//	Init_Transceiver();
+//	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
+//	Config_CRC(CRC_Field_On, CRC_Field_1byte);
+//	//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
+//	Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
+//	Config_ESB_Protocol(nRF24_ARD_1000us,10);
+//	//on sort du mode power down
+//	nRF24_SetPowerMode(nRF24_PWR_UP);
+//	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+//
+//	//Entrée en mode TX
+//	nRF24_SetOperationalMode(nRF24_MODE_TX);
+//	StopListen();
+//
+//	//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
+//	//mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
+//	//on va partir sur une période de 100 ms
+//	mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
+//
+//	int expNumber = 0;
+//	int packetNumber = 0;
+//
+//	// 1 char = 1 octet, donc chaque message a une taille max de 32 char
+//	char messageToSend[33];  // 32 char + caractère de fin de chaîne
+//
+//	// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
+//	snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
+//
+//	// Appel de la fonction Transmit_Message (exemple d'appel)
+//	Transmit_Message((uint8_t *)messageToSend, 32);
+
+
+
+//	//// ----------------------------------------------------------------------------
+//	//// 									PRX
+//	//// 				RECEPTION DE MESSAGES VIA LE TRANCEIVER RF
+//	//// ----------------------------------------------------------------------------
+//	//configuration du transceiver en mode PRX
+//	Init_Transceiver();
+//	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_12dBm);
+//	Config_CRC(CRC_Field_On, CRC_Field_1byte);
+//	Config_PRX_adress(5,nRF24_AA_ON,Default_pipe_address); //Adresse sur 5 bits
+//	Config_ESB_Protocol(nRF24_ARD_500us,10);
+//	//on sort du mode power down
+//	nRF24_SetPowerMode(nRF24_PWR_UP);
+//	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+//
+//	//Entrée en mode RX
+//	nRF24_SetOperationalMode(nRF24_MODE_RX);
+//	StartListen();
+//
+//	//Ecoute continue
+//	Continuous_RX_Listen(500);
