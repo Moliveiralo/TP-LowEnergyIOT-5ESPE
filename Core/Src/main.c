@@ -30,7 +30,7 @@
 volatile unsigned int ticks = 0; //pour la gestion des intervalles de temps. 1 tick = 10 ms.
 volatile int blue_mode = 0; //pour savoir si on est dans le mode "Blue mode"
 volatile int old_blue = 0;
-volatile int expe = 0; //pour la sauvegarde du numéro de l'expérience
+volatile int expe = 1; //pour la sauvegarde du numéro de l'expérience
 uint32_t testing ;
 int status;
 LL_RTC_InitTypeDef RTC_InitStruct;
@@ -42,6 +42,7 @@ void expe_counter() {
 
 	if (BLUE_BUTTON()) {
 		expe = LL_RTC_BAK_GetRegister(RTC, LL_RTC_BKP_DR0);
+		expe++;
 		if (9 == expe){ expe = 1; }
 		LL_RTC_BAK_SetRegister(RTC, LL_RTC_BKP_DR0, expe);
 	}
@@ -69,10 +70,10 @@ int main(void)
 	} else {
 		cold_start();
 	}
-	expe_counter();
 
-	// config systick avec interrupt
-	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
+	expe_counter();
+	expe = LL_RTC_BAK_GetRegister(RTC, LL_RTC_BKP_DR0);
+
 
 	if (expe == 1) {
 		SystemClock_Config_80M();
@@ -104,6 +105,9 @@ int main(void)
 		SystemClock_Config_ExpeReste();
 
 	}
+
+	// config systick avec interrupt
+	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
 
 	while (1)
 	{
@@ -147,6 +151,52 @@ int main(void)
 				//null;
 			}
 		}
+
+
+
+
+
+
+
+//		//// ----------------------------------------------------------------------------
+//		//// 									PTX
+//		//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
+//		//// ----------------------------------------------------------------------------
+//		//configuration du transceiver en mode PTX
+//		Init_Transceiver();
+//		Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
+//		Config_CRC(CRC_Field_On, CRC_Field_1byte);
+//		//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
+//		Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
+//		Config_ESB_Protocol(nRF24_ARD_1000us,10);
+//		//on sort du mode power down
+//		nRF24_SetPowerMode(nRF24_PWR_UP);
+//		Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+//
+//		//Entrée en mode TX
+//		nRF24_SetOperationalMode(nRF24_MODE_TX);
+//		StopListen();
+//
+//		//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
+//		mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
+//		//on va partir sur une période de 100 ms
+//		//mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
+//
+//		int expNumber = 0;
+//		int packetNumber = 0;
+//
+//		// 1 char = 1 octet, donc chaque message a une taille max de 32 char
+//		char messageToSend[33];  // 32 char + caractère de fin de chaîne
+//
+//		// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
+//		snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
+//
+//		// Appel de la fonction Transmit_Message (exemple d'appel)
+//		Transmit_Message((uint8_t *)messageToSend, 32);
+
+
+
+
 	}
 }
 // systick interrupt handler --> allumage LED toutes les 2 s pendant 50 ms.
@@ -165,17 +215,6 @@ void SysTick_Handler()
 	}
 	else 	old_blue = 0;
 }
-
-
-//_______________________________FONCTIONS DES EXPERIENCES______________________________________//
-
-
-
-
-
-
-//_____________________________________________________________________________________________//
-
 
 
 /**
@@ -347,41 +386,7 @@ void RTC_WKUP_IRQHandler() {
 
 
 
-//	//// ----------------------------------------------------------------------------
-//	//// 									PTX
-//	//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
-//	//// ----------------------------------------------------------------------------
-//	//configuration du transceiver en mode PTX
-//	Init_Transceiver();
-//	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
-//	Config_CRC(CRC_Field_On, CRC_Field_1byte);
-//	//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
-//	Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
-//	Config_ESB_Protocol(nRF24_ARD_1000us,10);
-//	//on sort du mode power down
-//	nRF24_SetPowerMode(nRF24_PWR_UP);
-//	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
-//
-//	//Entrée en mode TX
-//	nRF24_SetOperationalMode(nRF24_MODE_TX);
-//	StopListen();
-//
-//	//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
-//	//mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
-//	//on va partir sur une période de 100 ms
-//	mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
-//
-//	int expNumber = 0;
-//	int packetNumber = 0;
-//
-//	// 1 char = 1 octet, donc chaque message a une taille max de 32 char
-//	char messageToSend[33];  // 32 char + caractère de fin de chaîne
-//
-//	// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
-//	snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
-//
-//	// Appel de la fonction Transmit_Message (exemple d'appel)
-//	Transmit_Message((uint8_t *)messageToSend, 32);
+
 
 
 
