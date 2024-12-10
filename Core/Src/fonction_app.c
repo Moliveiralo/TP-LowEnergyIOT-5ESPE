@@ -17,7 +17,7 @@ void cold_start(){
 	LL_RCC_LSE_Enable();
 	while (LL_RCC_LSE_IsReady() != 1);
 
-	LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSE);
+	//LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSE);
 
 	LL_RCC_EnableRTC();
 
@@ -35,7 +35,7 @@ void hot_start(){
 
 	LL_RCC_EnableRTC();
 
-	LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSE);
+	//LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSE);
 
 	if (LL_RCC_LSE_IsReady() != 1) {
 		LL_RCC_LSE_Enable();

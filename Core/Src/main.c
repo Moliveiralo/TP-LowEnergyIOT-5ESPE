@@ -130,7 +130,8 @@ int main(void)
 		}
 		if (expe == 3) {
 			if (blue_mode){
-				Sleep();
+				//Sleep();
+				LL_LPM_EnableSleep();
 			}
 		}
 		if (expe ==4){
