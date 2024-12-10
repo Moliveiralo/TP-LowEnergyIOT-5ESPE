@@ -3,6 +3,8 @@
  */
 /* GPIO config.
  */
+#include <stdint.h>
+#include "stm32l4xx_ll_gpio.h"
 
 #define User_Button_Pin LL_GPIO_PIN_13
 #define User_Button_GPIO_Port GPIOC
@@ -24,9 +26,16 @@
 #define Clock_Monitor_Pin LL_GPIO_PIN_10
 #define Clock_Monitor_GPIO_Port GPIOC
 
+//testing PIN
+#define NEW_PIN_Port GPIOB
+#define NEW_PIN LL_GPIO_PIN_6
+
 // config
 void GPIO_init(void);
 
 // utilisation
 void LED_GREEN( int val );
 int BLUE_BUTTON();
+
+//test pin
+void SetPinForDuration(GPIO_TypeDef *port, uint32_t pin, uint32_t duration_ms);

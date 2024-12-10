@@ -95,67 +95,37 @@ void SystemClock_Config_Expe2()
 
 void SystemClock_Config_ExpeReste()
 {
+	/* MSI configuration and activation */
+	LL_RCC_MSI_Enable();
+	while	(LL_RCC_MSI_IsReady() != 1)
+		{ }
 
-
-
+	/* Flash Latency + Voltage Scaling */
 	LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
-	  while(LL_FLASH_GetLatency()!= LL_FLASH_LATENCY_3)
-	  {
-	  }
-	  LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE2);
-	  LL_RCC_LSI_Enable();
+	LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE2);
 
-	   /* Wait till LSI is ready */
-	  while(LL_RCC_LSI_IsReady() != 1)
-	  {
-
-	  }
-	  LL_PWR_EnableBkUpAccess();
-
-	  LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSI);
-	  LL_RCC_EnableRTC();
-
-	  LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
-	  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
-	  LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
-
-	  //update global variable SystemCoreClock --> give access to CPU clock frequency.
-	  LL_SetSystemCoreClock(24000000);
+	//ne pas activer ni sélectionner comme source système la PLL
 
 
+	//changer la fréquence du MSI, en changeant de "Range"
+	//changer le code de 4 bits dans MSISRANGE[3:0] (registre RCC->CR)
+	RCC->CR &= ~(0xFF <<4);
+	RCC->CR |= (0x1001 <<4); //24MHz
 
+	//mettre a 1 le bit MSIRGSEL dans le même registre
+	RCC->CR &= ~(1 <<3);
+	RCC->CR |= (1 <<3);
 
-//	/* MSI configuration and activation */
-//	LL_RCC_MSI_Enable();
-//	while	(LL_RCC_MSI_IsReady() != 1)
-//		{ }
-//
-//	/* Flash Latency + Voltage Scaling */
-//	LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
-//	LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE2);
-//
-//	//ne pas activer ni sélectionner comme source système la PLL
-//
-//
-//	//changer la fréquence du MSI, en changeant de "Range"
-//	//changer le code de 4 bits dans MSISRANGE[3:0] (registre RCC->CR)
-//	RCC->CR &= ~(0xFF <<4);
-//	RCC->CR |= (0x1001 <<4); //24MHz
-//
-//	//mettre a 1 le bit MSIRGSEL dans le même registre
-//	RCC->CR &= ~(1 <<3);
-//	RCC->CR |= (1 <<3);
-//
-//	//connecter SysClk sur MSI meme si normalement deja fait
-//	LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_MSI);
-//	while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_MSI) {}
-//
-//	/* Set APB1 & APB2 prescaler*/
-//	LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
-//	LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
-//
-//	//update global variable SystemCoreClock --> give access to CPU clock frequency.
-//	LL_SetSystemCoreClock(24000000);
+	//connecter SysClk sur MSI meme si normalement deja fait
+	LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_MSI);
+	while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_MSI) {}
+
+	/* Set APB1 & APB2 prescaler*/
+	LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
+	LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
+
+	//update global variable SystemCoreClock --> give access to CPU clock frequency.
+	LL_SetSystemCoreClock(24000000);
 }
 
 // config systick avec interrupt. L'argument periode_en_ticks indique la période de débordement
