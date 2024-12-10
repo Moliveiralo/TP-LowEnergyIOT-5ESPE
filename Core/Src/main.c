@@ -58,7 +58,7 @@ int main(void)
 	// config GPIO
 	GPIO_init();
 	//config clock
-	SystemClock_Config_80M();
+	//SystemClock_Config_80M();
 	//config bus SPI1 (pour la communication avec le transceiver nRF24L01)
 	SPI1_Init();
 	//config USART2
