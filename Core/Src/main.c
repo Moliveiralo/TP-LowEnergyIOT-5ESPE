@@ -1,6 +1,3 @@
-/*Author: Alexandre Boyer
- * Date: 14 Aug. 2024
- */
 /* Project L476_LoPoSo_LEDBlink_2043 for STM32L476 mounted on Nucleo board:
  * Starting project for Low Power Software lab (5ESPE) - Version 2024-25.
  * tThe user LED (mounted on pin PB13) is flashed every 2 seconds for 50 ms.
