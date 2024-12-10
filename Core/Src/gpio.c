@@ -13,6 +13,7 @@
 #include "gpio.h"
 
 
+
 void GPIO_init(void)
 {
 	  LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
@@ -62,6 +63,13 @@ void GPIO_init(void)
 	  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
 	  LL_GPIO_Init(Clock_Monitor_GPIO_Port, &GPIO_InitStruct);
 
+	  //testing pin config
+	  GPIO_InitStruct.Pin = NEW_PIN;
+	  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+	  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+	  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+	  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+	  LL_GPIO_Init(NEW_PIN_Port, &GPIO_InitStruct);
 	  /**/
 	  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE0);
 
@@ -98,6 +106,12 @@ int BLUE_BUTTON()
 }
 
 
-
+//testing pin fonction
+void SetPinForDuration(GPIO_TypeDef *port, uint32_t pin, uint32_t duration_ms)
+{
+    LL_GPIO_SetOutputPin(port, pin);     // Set pin high
+    LL_mDelay(duration_ms);              // Wait for the specified duration
+    LL_GPIO_ResetOutputPin(port, pin);   // Set pin low
+}
 
 

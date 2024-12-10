@@ -81,6 +81,7 @@ int main(void)
 
 	if (expe == 1) {
 		SystemClock_Config_80M();
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 100);
 	}
 	if (expe == 2) {
 		SystemClock_Config_Expe2();
