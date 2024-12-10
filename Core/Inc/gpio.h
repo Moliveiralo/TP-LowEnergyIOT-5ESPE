@@ -24,9 +24,16 @@
 #define Clock_Monitor_Pin LL_GPIO_PIN_10
 #define Clock_Monitor_GPIO_Port GPIOC
 
+//testing PIN
+#define NEW_PIN_Port GPIOB
+#define NEW_PIN LL_GPIO_PIN_6
+
 // config
 void GPIO_init(void);
 
 // utilisation
 void LED_GREEN( int val );
 int BLUE_BUTTON();
+
+//test pin
+void SetPinForDuration(GPIO_TypeDef *port, uint32_t pin, uint32_t duration_ms);
