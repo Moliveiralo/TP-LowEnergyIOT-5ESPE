@@ -55,6 +55,8 @@ int main(void)
 	/*clock domains activation*/
 	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
 	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+
+
 	// config GPIO
 	GPIO_init();
 	//config clock
@@ -64,12 +66,17 @@ int main(void)
 	//config USART2
 	USART2_Init();
 
+
 	NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+
+
+	// Checking if the card is experiencing a cold start (user just plugged in the card) or a hot start (user pressed the reset button)
 	if (LL_RCC_LSE_IsReady() == 1) {
 		hot_start();
 	} else {
 		cold_start();
 	}
+
 
 	expe_counter();
 	expe = LL_RTC_BAK_GetRegister(RTC, LL_RTC_BKP_DR0);
@@ -158,41 +165,41 @@ int main(void)
 
 
 
-//		//// ----------------------------------------------------------------------------
-//		//// 									PTX
-//		//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
-//		//// ----------------------------------------------------------------------------
-//		//configuration du transceiver en mode PTX
-//		Init_Transceiver();
-//		Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
-//		Config_CRC(CRC_Field_On, CRC_Field_1byte);
-//		//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
-//		Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
-//		Config_ESB_Protocol(nRF24_ARD_1000us,10);
-//		//on sort du mode power down
-//		nRF24_SetPowerMode(nRF24_PWR_UP);
-//		Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
-//
-//		//Entrée en mode TX
-//		nRF24_SetOperationalMode(nRF24_MODE_TX);
-//		StopListen();
-//
-//		//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
-//		mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
-//		//on va partir sur une période de 100 ms
-//		//mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
-//
-//		int expNumber = 0;
-//		int packetNumber = 0;
-//
-//		// 1 char = 1 octet, donc chaque message a une taille max de 32 char
-//		char messageToSend[33];  // 32 char + caractère de fin de chaîne
-//
-//		// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
-//		snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
-//
-//		// Appel de la fonction Transmit_Message (exemple d'appel)
-//		Transmit_Message((uint8_t *)messageToSend, 32);
+		//		//// ----------------------------------------------------------------------------
+		//		//// 									PTX
+		//		//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
+		//		//// ----------------------------------------------------------------------------
+		//		//configuration du transceiver en mode PTX
+		//		Init_Transceiver();
+		//		Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
+		//		Config_CRC(CRC_Field_On, CRC_Field_1byte);
+		//		//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
+		//		Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
+		//		Config_ESB_Protocol(nRF24_ARD_1000us,10);
+		//		//on sort du mode power down
+		//		nRF24_SetPowerMode(nRF24_PWR_UP);
+		//		Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+		//
+		//		//Entrée en mode TX
+		//		nRF24_SetOperationalMode(nRF24_MODE_TX);
+		//		StopListen();
+		//
+		//		//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
+		//		mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
+		//		//on va partir sur une période de 100 ms
+		//		//mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
+		//
+		//		int expNumber = 0;
+		//		int packetNumber = 0;
+		//
+		//		// 1 char = 1 octet, donc chaque message a une taille max de 32 char
+		//		char messageToSend[33];  // 32 char + caractère de fin de chaîne
+		//
+		//		// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
+		//		snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
+		//
+		//		// Appel de la fonction Transmit_Message (exemple d'appel)
+		//		Transmit_Message((uint8_t *)messageToSend, 32);
 
 
 
@@ -250,27 +257,27 @@ void assert_failed(uint8_t *file, uint32_t line)
 // partie commune a toutes les utilisations du wakeup timer
 void RTC_wakeup_init( int delay )
 {
-LL_RTC_DisableWriteProtection( RTC );
-LL_RTC_WAKEUP_Disable( RTC );
-while	( !LL_RTC_IsActiveFlag_WUTW( RTC ) )
+	LL_RTC_DisableWriteProtection( RTC );
+	LL_RTC_WAKEUP_Disable( RTC );
+	while	( !LL_RTC_IsActiveFlag_WUTW( RTC ) )
 	{ }
-// connecter le timer a l'horloge 1Hz de la RTC
-LL_RTC_WAKEUP_SetClock( RTC, LL_RTC_WAKEUPCLOCK_CKSPRE );
-// fixer la duree de temporisation
-LL_RTC_WAKEUP_SetAutoReload( RTC, delay );	// 16 bits
-LL_RTC_ClearFlag_WUT(RTC);
-LL_RTC_EnableIT_WUT(RTC);
-LL_RTC_WAKEUP_Enable(RTC);
-LL_RTC_EnableWriteProtection(RTC);
+	// connecter le timer a l'horloge 1Hz de la RTC
+	LL_RTC_WAKEUP_SetClock( RTC, LL_RTC_WAKEUPCLOCK_CKSPRE );
+	// fixer la duree de temporisation
+	LL_RTC_WAKEUP_SetAutoReload( RTC, delay );	// 16 bits
+	LL_RTC_ClearFlag_WUT(RTC);
+	LL_RTC_EnableIT_WUT(RTC);
+	LL_RTC_WAKEUP_Enable(RTC);
+	LL_RTC_EnableWriteProtection(RTC);
 }
 
 // Dans le cas des modes STANDBY et SHUTDOWN, le MPU sera reveille par reset
 // causé par 1 wakeup line (interne ou externe) (le NVIC n'est plus alimenté)
 void RTC_wakeup_init_from_standby_or_shutdown( int delay )
 {
-RTC_wakeup_init( delay );
-// enable the Internal Wake-up line
-LL_PWR_EnableInternWU();	// ceci ne concerne que Standby et Shutdown, pas STOPx
+	RTC_wakeup_init( delay );
+	// enable the Internal Wake-up line
+	LL_PWR_EnableInternWU();	// ceci ne concerne que Standby et Shutdown, pas STOPx
 }
 
 // Dans le cas des modes STOPx, le MPU sera reveille par interruption
@@ -279,13 +286,13 @@ LL_PWR_EnableInternWU();	// ceci ne concerne que Standby et Shutdown, pas STOPx
 // reprend l'execution après l'instruction WFI
 void RTC_wakeup_init_from_stop( int delay )
 {
-RTC_wakeup_init( delay );
-// valider l'interrupt par la ligne 20 du module EXTI, qui est réservée au wakeup timer
-LL_EXTI_EnableIT_0_31( LL_EXTI_LINE_20 );
-LL_EXTI_EnableRisingTrig_0_31( LL_EXTI_LINE_20 );
-// valider l'interrupt chez NVIC
-NVIC_SetPriority( RTC_WKUP_IRQn, 1 );
-NVIC_EnableIRQ( RTC_WKUP_IRQn );
+	RTC_wakeup_init( delay );
+	// valider l'interrupt par la ligne 20 du module EXTI, qui est réservée au wakeup timer
+	LL_EXTI_EnableIT_0_31( LL_EXTI_LINE_20 );
+	LL_EXTI_EnableRisingTrig_0_31( LL_EXTI_LINE_20 );
+	// valider l'interrupt chez NVIC
+	NVIC_SetPriority( RTC_WKUP_IRQn, 1 );
+	NVIC_EnableIRQ( RTC_WKUP_IRQn );
 }
 
 // wakeup timer interrupt Handler (inutile mais doit etre defini)
