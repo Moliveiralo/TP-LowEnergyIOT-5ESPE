@@ -85,22 +85,24 @@ int main(void)
 	}
 	if (expe == 2) {
 		SystemClock_Config_Expe2();
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 200);
 	}
 	if (expe == 3) {
 		SystemClock_Config_ExpeReste();
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 300);
 
 	}
 	if (expe ==4){ //expe3 bis car non realise
 		SystemClock_Config_ExpeReste();
-
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 400);
 	}
 	if (expe == 5) {
 		SystemClock_Config_ExpeReste();
-
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 500);
 	}
 	if (expe == 6) {
 		SystemClock_Config_ExpeReste();
-
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 600);
 	}
 	if (expe == 7) {
 		SystemClock_Config_ExpeReste();
