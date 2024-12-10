@@ -89,7 +89,7 @@ int main(void)
 		SystemClock_Config_ExpeReste();
 
 	}
-	if (expe ==4){ //expe3 bis car non realise
+	if (expe ==4){
 		SystemClock_Config_ExpeReste();
 
 	}
