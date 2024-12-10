@@ -1,6 +1,3 @@
-/*Author: Alexandre Boyer
- * Date: 14 Aug. 2024
- */
 /* Project L476_LoPoSo_LEDBlink_2043 for STM32L476 mounted on Nucleo board:
  * Starting project for Low Power Software lab (5ESPE) - Version 2024-25.
  * tThe user LED (mounted on pin PB13) is flashed every 2 seconds for 50 ms.
@@ -60,7 +57,7 @@ int main(void)
 	// config GPIO
 	GPIO_init();
 	//config clock
-	//SystemClock_Config_80M();
+	SystemClock_Config_80M();
 	//config bus SPI1 (pour la communication avec le transceiver nRF24L01)
 	SPI1_Init();
 	//config USART2
@@ -88,23 +85,24 @@ int main(void)
 	}
 	if (expe == 2) {
 		SystemClock_Config_Expe2();
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 200);
 	}
 	if (expe == 3) {
-		//SystemClock_Config_ExpeReste();
-		SystemClock_Config_Expe2();
+		SystemClock_Config_ExpeReste();
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 300);
 
 	}
 	if (expe ==4){ //expe3 bis car non realise
 		SystemClock_Config_ExpeReste();
-
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 400);
 	}
 	if (expe == 5) {
 		SystemClock_Config_ExpeReste();
-
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 500);
 	}
 	if (expe == 6) {
 		SystemClock_Config_ExpeReste();
-
+		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 600);
 	}
 	if (expe == 7) {
 		SystemClock_Config_ExpeReste();
@@ -133,7 +131,6 @@ int main(void)
 		if (expe == 3) {
 			if (blue_mode){
 				Sleep();
-				//LL_LPM_EnableSleep();
 			}
 		}
 		if (expe ==4){

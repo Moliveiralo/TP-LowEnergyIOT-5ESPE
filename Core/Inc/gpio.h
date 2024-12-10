@@ -3,6 +3,8 @@
  */
 /* GPIO config.
  */
+#include <stdint.h>
+#include "stm32l4xx_ll_gpio.h"
 
 #define User_Button_Pin LL_GPIO_PIN_13
 #define User_Button_GPIO_Port GPIOC
