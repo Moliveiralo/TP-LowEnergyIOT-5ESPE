@@ -25,6 +25,7 @@
 
 
 volatile unsigned int ticks = 0; //pour la gestion des intervalles de temps. 1 tick = 10 ms.
+unsigned int subticks = 0;
 volatile int blue_mode = 0; //pour savoir si on est dans le mode "Blue mode"
 volatile int old_blue = 0;
 volatile int expe = 1; //pour la sauvegarde du numéro de l'expérience
@@ -81,28 +82,22 @@ int main(void)
 
 	if (expe == 1) {
 		SystemClock_Config_80M();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 100);
 	}
 	if (expe == 2) {
 		SystemClock_Config_Expe2();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 200);
 	}
 	if (expe == 3) {
 		SystemClock_Config_ExpeReste();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 300);
 
 	}
 	if (expe ==4){ //expe3 bis car non realise
 		SystemClock_Config_ExpeReste();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 400);
 	}
 	if (expe == 5) {
 		SystemClock_Config_ExpeReste();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 500);
 	}
 	if (expe == 6) {
 		SystemClock_Config_ExpeReste();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 600);
 	}
 	if (expe == 7) {
 		SystemClock_Config_ExpeReste();
@@ -140,17 +135,20 @@ int main(void)
 		}
 		if (expe == 5) {
 			if (blue_mode){
-				//null;
+				Stop_0();
+				blue_mode=0;
 			}
 		}
 		if (expe == 6) {
 			if (blue_mode){
-				//null;
+				Stop_1();
+				blue_mode=0;
 			}
 		}
 		if (expe == 7) {
 			if (blue_mode){
-				//null;
+				Stop_2();
+				blue_mode=0;
 			}
 		}
 		if (expe == 8) {
@@ -218,11 +216,18 @@ void SysTick_Handler()
 	{
 		if	( old_blue == 0 )
 			blue_mode = 1;
-
+			old_blue =1;
 	}
 	else 	old_blue = 0;
-}
 
+ subticks = ticks %200;
+ if(subticks ==0)
+ 	 {
+	 	 LED_GREEN(1);
+ 	 }else if (subticks == 5*expe){
+ 		 LED_GREEN(0);
+ 	 }
+}
 
 /**
  * @brief  This function is executed in case of error occurrence.

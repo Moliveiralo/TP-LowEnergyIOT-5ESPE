@@ -31,4 +31,8 @@ void hot_start();
 void  Sleep();
 void configMsiLse();
 
+void Stop_0();
+void Stop_1();
+void Stop_2();
+
 #endif /* INC_FONCTION_APP_H_ */

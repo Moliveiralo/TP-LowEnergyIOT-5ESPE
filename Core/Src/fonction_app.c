@@ -66,3 +66,31 @@ void Sleep()
 
 	//sortie du sleep mode avec le reset
 }
+
+void Stop_0()
+{
+	LL_LPM_EnableDeepSleep();
+	LL_PWR_SetPowerMode(LL_PWR_MODE_STOP0); //stop0
+	RTC_wakeup_init_from_stop(7);
+	__WFI();  //attente interruption
+
+	//sortie du sleep mode avec le reset
+}
+void Stop_1()
+{
+	LL_LPM_EnableDeepSleep();
+	LL_PWR_SetPowerMode(LL_PWR_MODE_STOP1); //stop0
+	RTC_wakeup_init_from_stop(7);
+	__WFI();  //attente interruption
+
+	//sortie du sleep mode avec le reset
+}
+void Stop_2()
+{
+	LL_LPM_EnableDeepSleep();
+	LL_PWR_SetPowerMode(LL_PWR_MODE_STOP2); //stop0
+	RTC_wakeup_init_from_stop(7);
+	__WFI();  //attente interruption
+
+	//sortie du sleep mode avec le reset
+}
