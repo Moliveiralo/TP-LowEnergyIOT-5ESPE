@@ -68,12 +68,17 @@ int main(void)
 	NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
 
-	// Checking if the card is experiencing a cold start (user just plugged in the card) or a hot start (user pressed the reset button)
 	if (LL_RCC_LSE_IsReady() == 1) {
 		hot_start();
-	} else {
+		} else {
 		cold_start();
-	}
+		}
+	// Checking if the card is experiencing a cold start (user just plugged in the card) or a hot start (user pressed the reset button)
+//	if (LL_RCC_LSE_IsReady() == 1) {
+//		hot_start();
+//	} else {
+//		cold_start();
+//	}
 
 
 	expe_counter();
@@ -91,10 +96,13 @@ int main(void)
 
 	}
 	if (expe ==4){
+		LL_LPM_EnableSleep();
 		SystemClock_Config_ExpeReste();
 	}
 	if (expe == 5) {
+		LL_LPM_EnableSleep();
 		SystemClock_Config_ExpeReste();
+		LL_RCC_MSI_EnablePLLMode();
 	}
 	if (expe == 6) {
 		SystemClock_Config_ExpeReste();
@@ -108,9 +116,9 @@ int main(void)
 
 	}
 
-	// config systick avec interrupt
-	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
-
+	NVIC_SetPriority(SysTick_IRQn, -1);
+		// config systick avec interrupt
+	mySystick(SystemCoreClock / 100 );	// 100 Hz --> 10 ms
 	while (1)
 	{
 		if (expe == 1) {
@@ -161,8 +169,6 @@ int main(void)
 
 
 
-
-
 		//		//// ----------------------------------------------------------------------------
 		//		//// 									PTX
 		//		//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
@@ -208,10 +214,9 @@ int main(void)
 //Scrutation de l'état du bouton bleu  (pas d'action à ce stade).
 void SysTick_Handler()
 {
-	//unsigned int subticks;
 
-	//scrutation bouton bleu
 	ticks += 1;
+	GPIOC->ODR ^= (1 << 1);
 	if	( BLUE_BUTTON() )
 	{
 		if	( old_blue == 0 )
