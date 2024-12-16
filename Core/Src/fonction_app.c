@@ -88,9 +88,10 @@ void Stop_1()
 }
 void Stop_2()
 {
+	RTC_wakeup_init_from_stop(7);
 	LL_LPM_EnableDeepSleep();
 	LL_PWR_SetPowerMode(LL_PWR_MODE_STOP2); //stop0
-	RTC_wakeup_init_from_stop(7);
+
 	__WFI();  //attente interruption
 
 	//sortie du sleep mode avec le reset
