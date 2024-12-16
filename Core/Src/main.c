@@ -58,10 +58,7 @@ int main(void)
 	GPIO_init();
 	//config clock
 	SystemClock_Config_80M();
-	//config bus SPI1 (pour la communication avec le transceiver nRF24L01)
-	SPI1_Init();
-	//config USART2
-	USART2_Init();
+
 
 
 	NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
@@ -81,28 +78,30 @@ int main(void)
 
 	if (expe == 1) {
 		SystemClock_Config_80M();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 100);
+		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 100);
 	}
 	if (expe == 2) {
 		SystemClock_Config_Expe2();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 200);
+		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 200);
 	}
 	if (expe == 3) {
-		SystemClock_Config_ExpeReste();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 300);
+		//SystemClock_Config_ExpeReste();
+
+		SystemClock_Config_Expe2();
+		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 300);
 
 	}
 	if (expe ==4){ //expe3 bis car non realise
 		SystemClock_Config_ExpeReste();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 400);
+		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 400);
 	}
 	if (expe == 5) {
 		SystemClock_Config_ExpeReste();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 500);
+		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 500);
 	}
 	if (expe == 6) {
 		SystemClock_Config_ExpeReste();
-		SetPinForDuration(NEW_PIN_Port, NEW_PIN, 600);
+		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 600);
 	}
 	if (expe == 7) {
 		SystemClock_Config_ExpeReste();
@@ -115,6 +114,11 @@ int main(void)
 
 	// config systick avec interrupt
 	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
+
+	//config bus SPI1 (pour la communication avec le transceiver nRF24L01)
+	//SPI1_Init();
+	//config USART2
+	//USART2_Init();
 
 	while (1)
 	{

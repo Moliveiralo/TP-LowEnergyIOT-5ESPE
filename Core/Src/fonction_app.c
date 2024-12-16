@@ -22,8 +22,10 @@ void cold_start(){
 	LL_RCC_EnableRTC();
 
 	LL_RTC_DisableWriteProtection(RTC);
+	LL_RTC_EnableInitMode(RTC);
 	LL_RTC_SetAsynchPrescaler(RTC, 0x7F);
 	LL_RTC_SetSynchPrescaler(RTC, 0xFF);
+	LL_RTC_DisableInitMode(RTC);
 	LL_RTC_EnableWriteProtection(RTC);
 	LL_RTC_BAK_SetRegister(RTC, LL_RTC_BKP_DR0, 1);
 
@@ -31,23 +33,23 @@ void cold_start(){
 
 
 void hot_start(){
-	LL_PWR_EnableBkUpAccess(); // A vérifier si c'est nécessaire
-
-	LL_RCC_EnableRTC();
-
-	//LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSE);
-
-	if (LL_RCC_LSE_IsReady() != 1) {
-		LL_RCC_LSE_Enable();
-		while (LL_RCC_LSE_IsReady() != 1);
-	}
-	if (!LL_RTC_IsActiveFlag_INITS(RTC)) {
-		LL_RTC_DisableWriteProtection(RTC);
-		LL_RTC_SetAsynchPrescaler(RTC, 0x7F);
-		LL_RTC_SetSynchPrescaler(RTC, 0xFF);
-		LL_RTC_EnableWriteProtection(RTC);
-
-	}
+//	LL_PWR_EnableBkUpAccess(); // A vérifier si c'est nécessaire
+//
+//	LL_RCC_EnableRTC();
+//
+//	//LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSE);
+//
+//	if (LL_RCC_LSE_IsReady() != 1) {
+//		LL_RCC_LSE_Enable();
+//		while (LL_RCC_LSE_IsReady() != 1);
+//	}
+//	if (!LL_RTC_IsActiveFlag_INITS(RTC)) {
+//		LL_RTC_DisableWriteProtection(RTC);
+//		LL_RTC_SetAsynchPrescaler(RTC, 0x7F);
+//		LL_RTC_SetSynchPrescaler(RTC, 0xFF);
+//		LL_RTC_EnableWriteProtection(RTC);
+//
+//	}
 }
 
 void configMsiLse(){
