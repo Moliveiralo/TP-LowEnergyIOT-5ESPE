@@ -97,3 +97,12 @@ void Stop_2()
 
 	//sortie du sleep mode avec le reset
 }
+void Shutdown()
+{
+	LL_LPM_EnableDeepSleep();
+	LL_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN); //stop0
+	RTC_wakeup_init_from_standby_or_shutdown(7);
+	__WFI();  //attente interruption
+
+	//sortie du sleep mode avec le reset
+}

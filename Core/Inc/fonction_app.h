@@ -23,6 +23,7 @@
 #include "stm32l4xx_ll_gpio.h"
 
 #include "gpio.h"
+#include "main.h"
 #include "clock.h"
 #include <stdio.h>
 
@@ -34,5 +35,6 @@ void configMsiLse();
 void Stop_0();
 void Stop_1();
 void Stop_2();
+void Shutdown();
 
 #endif /* INC_FONCTION_APP_H_ */
