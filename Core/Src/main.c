@@ -63,7 +63,13 @@ int main(void)
 	SPI1_Init();
 	//config USART2
 	USART2_Init();
-
+	//INIT RTC AVEC REGISTER
+	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN; //Enable GRP1_CLOCK
+	PWR->CR1 |= PWR_CR1_DBP; //Enable BkUpAccess
+	RCC->BDCR |= RCC_BDCR_LSEON; //Enable RCC_LSE
+	RCC->BDCR &= ~RCC_BDCR_RTCSEL; //Set RTCClockSource
+	RCC->BDCR |= RCC_BDCR_RTCSEL_0;
+	RCC->BDCR |= RCC_BDCR_RTCEN; // Enable RTC
 
 	NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
@@ -101,18 +107,20 @@ int main(void)
 	}
 	if (expe == 5) {
 		LL_LPM_EnableSleep();
-		SystemClock_Config_ExpeReste();
 		LL_RCC_MSI_EnablePLLMode();
 	}
 	if (expe == 6) {
 		SystemClock_Config_ExpeReste();
+		LL_RCC_MSI_EnablePLLMode();
 	}
 	if (expe == 7) {
 		SystemClock_Config_ExpeReste();
+		LL_RCC_MSI_EnablePLLMode();
 
 	}
 	if (expe == 8) {
 		SystemClock_Config_ExpeReste();
+		LL_RCC_MSI_EnablePLLMode();
 
 	}
 
@@ -161,7 +169,8 @@ int main(void)
 		}
 		if (expe == 8) {
 			if (blue_mode){
-				//null;
+				Shutdown();
+				blue_mode=0;
 			}
 		}
 
@@ -219,7 +228,7 @@ void SysTick_Handler()
 	GPIOC->ODR ^= (1 << 1);
 	if	( BLUE_BUTTON() )
 	{
-		if	( old_blue == 0 )
+		if	(old_blue == 0)
 			blue_mode = 1;
 			old_blue =1;
 	}
