@@ -22,9 +22,6 @@ void cold_start(){
 	LL_RCC_LSE_Enable();
 	while (LL_RCC_LSE_IsReady() != 1);
 
-	LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSE);
-	LL_RCC_EnableRTC();
-
 	LL_RTC_DisableWriteProtection(RTC);
 	LL_RTC_SetAsynchPrescaler(RTC, 0x7F);
 	LL_RTC_SetSynchPrescaler(RTC, 0xFF);
@@ -49,7 +46,7 @@ void hot_start(){
     LL_RTC_SetAsynchPrescaler(RTC, 0x7F);
     LL_RTC_SetSynchPrescaler(RTC, 0xFF);
     LL_RTC_EnableWriteProtection(RTC);
-
+    LL_RTC_BAK_SetRegister(RTC, LL_RTC_BKP_DR0, 1);
 
 }
 
@@ -72,18 +69,20 @@ void Sleep()
 
 void Stop_0()
 {
+	RTC_wakeup_init_from_stop(7);
 	LL_LPM_EnableDeepSleep();
 	LL_PWR_SetPowerMode(LL_PWR_MODE_STOP0); //stop0
-	RTC_wakeup_init_from_stop(7);
+
 	__WFI();  //attente interruption
 
 	//sortie du sleep mode avec le reset
 }
 void Stop_1()
 {
+	RTC_wakeup_init_from_stop(7);
 	LL_LPM_EnableDeepSleep();
 	LL_PWR_SetPowerMode(LL_PWR_MODE_STOP1); //stop0
-	RTC_wakeup_init_from_stop(7);
+
 	__WFI();  //attente interruption
 
 	//sortie du sleep mode avec le reset

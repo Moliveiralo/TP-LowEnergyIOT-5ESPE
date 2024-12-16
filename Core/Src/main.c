@@ -165,12 +165,7 @@ int main(void)
 //
 //	// Appel de la fonction Transmit_Message (exemple d'appel)
 //	Transmit_Message((uint8_t *)messageToSend, 32);
-
-
-
-
-
-	while (1)
+while (1)
 	{
 		if (expe == 1) {
 			if (blue_mode){
@@ -241,6 +236,11 @@ void SysTick_Handler()
 		LED_GREEN(1);
 	}else if (subticks == 5*expe){
 		LED_GREEN(0);
+	}
+
+	//gestion du toogle PC10
+	if(ticks % 1 == 0){
+		 LL_GPIO_TogglePin (GPIOC , LL_GPIO_PIN_10);
 	}
 }
 
