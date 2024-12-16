@@ -25,6 +25,7 @@
 
 
 volatile unsigned int ticks = 0; //pour la gestion des intervalles de temps. 1 tick = 10 ms.
+unsigned int subticks = 0;
 volatile int blue_mode = 0; //pour savoir si on est dans le mode "Blue mode"
 volatile int old_blue = 0;
 volatile int expe = 1; //pour la sauvegarde du numéro de l'expérience
@@ -58,18 +59,26 @@ int main(void)
 	GPIO_init();
 	//config clock
 	SystemClock_Config_80M();
-
+	//config bus SPI1 (pour la communication avec le transceiver nRF24L01)
+	SPI1_Init();
+	//config USART2
+	USART2_Init();
 
 
 	NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
 
-	// Checking if the card is experiencing a cold start (user just plugged in the card) or a hot start (user pressed the reset button)
 	if (LL_RCC_LSE_IsReady() == 1) {
 		hot_start();
-	} else {
+		} else {
 		cold_start();
-	}
+		}
+	// Checking if the card is experiencing a cold start (user just plugged in the card) or a hot start (user pressed the reset button)
+//	if (LL_RCC_LSE_IsReady() == 1) {
+//		hot_start();
+//	} else {
+//		cold_start();
+//	}
 
 
 	expe_counter();
@@ -78,30 +87,25 @@ int main(void)
 
 	if (expe == 1) {
 		SystemClock_Config_80M();
-		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 100);
 	}
 	if (expe == 2) {
 		SystemClock_Config_Expe2();
-		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 200);
 	}
 	if (expe == 3) {
-		//SystemClock_Config_ExpeReste();
-
-		SystemClock_Config_Expe2();
-		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 300);
+		SystemClock_Config_ExpeReste();
 
 	}
-	if (expe ==4){ //expe3 bis car non realise
+	if (expe ==4){
+		LL_LPM_EnableSleep();
 		SystemClock_Config_ExpeReste();
-		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 400);
 	}
 	if (expe == 5) {
+		LL_LPM_EnableSleep();
 		SystemClock_Config_ExpeReste();
-		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 500);
+		LL_RCC_MSI_EnablePLLMode();
 	}
 	if (expe == 6) {
 		SystemClock_Config_ExpeReste();
-		//SetPinForDuration(NEW_PIN_Port, NEW_PIN, 600);
 	}
 	if (expe == 7) {
 		SystemClock_Config_ExpeReste();
@@ -112,14 +116,9 @@ int main(void)
 
 	}
 
-	// config systick avec interrupt
-	mySystick( SystemCoreClock / 100 );	// 100 Hz --> 10 ms
-
-	//config bus SPI1 (pour la communication avec le transceiver nRF24L01)
-	//SPI1_Init();
-	//config USART2
-	//USART2_Init();
-
+	NVIC_SetPriority(SysTick_IRQn, -1);
+		// config systick avec interrupt
+	mySystick(SystemCoreClock / 100 );	// 100 Hz --> 10 ms
 	while (1)
 	{
 		if (expe == 1) {
@@ -144,17 +143,20 @@ int main(void)
 		}
 		if (expe == 5) {
 			if (blue_mode){
-				//null;
+				Stop_0();
+				blue_mode=0;
 			}
 		}
 		if (expe == 6) {
 			if (blue_mode){
-				//null;
+				Stop_1();
+				blue_mode=0;
 			}
 		}
 		if (expe == 7) {
 			if (blue_mode){
-				//null;
+				Stop_2();
+				blue_mode=0;
 			}
 		}
 		if (expe == 8) {
@@ -162,8 +164,6 @@ int main(void)
 				//null;
 			}
 		}
-
-
 
 
 
@@ -214,19 +214,25 @@ int main(void)
 //Scrutation de l'état du bouton bleu  (pas d'action à ce stade).
 void SysTick_Handler()
 {
-	//unsigned int subticks;
 
-	//scrutation bouton bleu
 	ticks += 1;
+	GPIOC->ODR ^= (1 << 1);
 	if	( BLUE_BUTTON() )
 	{
 		if	( old_blue == 0 )
 			blue_mode = 1;
-
+			old_blue =1;
 	}
 	else 	old_blue = 0;
-}
 
+ subticks = ticks %200;
+ if(subticks ==0)
+ 	 {
+	 	 LED_GREEN(1);
+ 	 }else if (subticks == 5*expe){
+ 		 LED_GREEN(0);
+ 	 }
+}
 
 /**
  * @brief  This function is executed in case of error occurrence.
