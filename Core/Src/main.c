@@ -79,6 +79,12 @@ int main(void)
 	} else {
 		cold_start();
 	}
+	// Checking if the card is experiencing a cold start (user just plugged in the card) or a hot start (user pressed the reset button)
+	//	if (LL_RCC_LSE_IsReady() == 1) {
+	//		hot_start();
+	//	} else {
+	//		cold_start();
+	//	}
 
 
 	expe_counter();
@@ -100,25 +106,21 @@ int main(void)
 		SystemClock_Config_ExpeReste();
 	}
 	if (expe == 5) {
-		SystemClock_Config_ExpeReste();
 		LL_LPM_EnableSleep();
 		LL_RCC_MSI_EnablePLLMode();
 	}
 	if (expe == 6) {
 		SystemClock_Config_ExpeReste();
 		LL_RCC_MSI_EnablePLLMode();
-		LL_LPM_EnableSleep();
 	}
 	if (expe == 7) {
 		SystemClock_Config_ExpeReste();
 		LL_RCC_MSI_EnablePLLMode();
-		LL_LPM_EnableSleep();
 
 	}
 	if (expe == 8) {
 		SystemClock_Config_ExpeReste();
 		LL_RCC_MSI_EnablePLLMode();
-		LL_LPM_EnableSleep();
 
 	}
 
@@ -130,41 +132,41 @@ int main(void)
 
 
 
-//	//// ----------------------------------------------------------------------------
-//	//// 									PTX
-//	//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
-//	//// ----------------------------------------------------------------------------
-//	//configuration du transceiver en mode PTX
-//	Init_Transceiver();
-//	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
-//	Config_CRC(CRC_Field_On, CRC_Field_1byte);
-//	//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
-//	Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
-//	Config_ESB_Protocol(nRF24_ARD_1000us,10);
-//	//on sort du mode power down
-//	nRF24_SetPowerMode(nRF24_PWR_UP);
-//	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
-//
-//	//Entrée en mode TX
-//	nRF24_SetOperationalMode(nRF24_MODE_TX);
-//	StopListen();
-//
-//	//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
-//	mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
-//	//on va partir sur une période de 100 ms
-//	//mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
-//
-//	int expNumber = expe;
-//	int packetNumber = 0;
-//
-//	// 1 char = 1 octet, donc chaque message a une taille max de 32 char
-//	char messageToSend[33];  // 32 char + caractère de fin de chaîne
-//
-//	// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
-//	snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
-//
-//	// Appel de la fonction Transmit_Message (exemple d'appel)
-//	Transmit_Message((uint8_t *)messageToSend, 32);
+	//// ----------------------------------------------------------------------------
+	//// 									PTX
+	//// 					ENVOI DE MESSAGES VIA LE TRANCEIVER RF
+	//// ----------------------------------------------------------------------------
+	//configuration du transceiver en mode PTX
+	Init_Transceiver();
+	Config_RF_channel(channel_nb,nRF24_DR_250kbps,nRF24_TXPWR_18dBm);
+	Config_CRC(CRC_Field_On, CRC_Field_1byte);
+	//Adresse sur 5 bits. Transmission sur le data pipe adr_data_pipe_used.
+	Config_PTX_adress(5,Default_pipe_address,adr_data_pipe_used,nRF24_AA_ON);
+	Config_ESB_Protocol(nRF24_ARD_1000us,10);
+	//on sort du mode power down
+	nRF24_SetPowerMode(nRF24_PWR_UP);
+	Delay_ms(2); //Attente 2 ms (1.5 ms pour la sortie du mode power down).
+
+	//Entrée en mode TX
+	nRF24_SetOperationalMode(nRF24_MODE_TX);
+	StopListen();
+
+	//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
+	//mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
+	//on va partir sur une période de 100 ms
+	//mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
+
+	int expNumber = expe;
+	int packetNumber = 0;
+
+	// 1 char = 1 octet, donc chaque message a une taille max de 32 char
+	char messageToSend[33];  // 32 char + caractère de fin de chaîne
+
+	// Création du message à envoyer			    |   NOMS DU BINOME   | EXPN | NBPAQUET |
+	snprintf(messageToSend, sizeof(messageToSend), "O-LOPES_TETAZ_CHALHOUB_EXP%d_%d   ", expNumber, packetNumber);
+
+	// Appel de la fonction Transmit_Message (exemple d'appel)
+	Transmit_Message((uint8_t *)messageToSend, 32);
 
 
 
