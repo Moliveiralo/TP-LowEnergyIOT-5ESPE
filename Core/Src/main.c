@@ -144,7 +144,7 @@ int main(void)
 	StopListen();
 
 	//configuration interruption Systick (attention, il n'y a quue 23 bits dans le registre load ...
-	mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
+	//mySystick( SystemCoreClock * 2 );	// 0.5 Hz --> 2 s
 	//on va partir sur une période de 100 ms
 	//mySystick( SystemCoreClock /10 ); //10 Hz --> 0.1 s
 
@@ -228,13 +228,13 @@ void SysTick_Handler()
 	}
 	else 	old_blue = 0;
 
-	subticks = ticks %200;
+	/*subticks = ticks %200;
 	if(subticks ==0)
 	{
 		LED_GREEN(1);
 	}else if (subticks == 5*expe){
 		LED_GREEN(0);
-	}
+	}*/
 }
 
 /**
