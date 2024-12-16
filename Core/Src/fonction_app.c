@@ -46,7 +46,6 @@ void hot_start(){
     LL_RTC_SetAsynchPrescaler(RTC, 0x7F);
     LL_RTC_SetSynchPrescaler(RTC, 0xFF);
     LL_RTC_EnableWriteProtection(RTC);
-    LL_RTC_BAK_SetRegister(RTC, LL_RTC_BKP_DR0, 1);
 
 }
 
