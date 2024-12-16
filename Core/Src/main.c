@@ -106,6 +106,7 @@ int main(void)
 		SystemClock_Config_ExpeReste();
 	}
 	if (expe == 5) {
+		SystemClock_Config_ExpeReste();
 		LL_LPM_EnableSleep();
 		LL_RCC_MSI_EnablePLLMode();
 	}
