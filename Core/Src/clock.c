@@ -60,41 +60,67 @@ void SystemClock_Config_80M()
 	LL_RCC_SetUSARTClockSource(LL_RCC_USART2_CLKSOURCE_PCLK1);
 }
 
-
 void SystemClock_Config_Expe2()
 {
-	/* MSI configuration and activation */
-	LL_RCC_MSI_Enable();
-	while	(LL_RCC_MSI_IsReady() != 1)
-		{ }
-
-	/* Flash Latency + Voltage Scaling */
 	LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
-	LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+	  while(LL_FLASH_GetLatency()!= LL_FLASH_LATENCY_1)
+	  {
+	  }
+	  LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+	  LL_RCC_MSI_Enable();
 
-	//ne pas activer ni sélectionner comme source système la PLL
+	   /* Wait till MSI is ready */
+	  while(LL_RCC_MSI_IsReady() != 1)
+	  {
 
+	  }
+	  LL_RCC_MSI_EnableRangeSelection();
+	  LL_RCC_MSI_SetRange(LL_RCC_MSIRANGE_9);
+	  LL_RCC_MSI_SetCalibTrimming(0);
+	  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_MSI);
 
-    //changer la fréquence du MSI, en changeant de "Range"
-	//changer le code de 4 bits dans MSISRANGE[3:0] (registre RCC->CR)
-	RCC->CR &= ~(0xFF <<4);
-	RCC->CR |= (0x1001 <<4); //24MHz
+	  LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
+	  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
+	  LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
 
-	//mettre a 1 le bit MSIRGSEL dans le même registre
-	RCC->CR &= ~(1 <<3);
-	RCC->CR |= (1 <<3);
-
-	//connecter SysClk sur MSI meme si normalement deja fait
-	LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_MSI); //change la source sur MSI
-	while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_MSI) {} //attend stabilisation de l'horloge avant de faire dautres operations
-
-	/* Set APB1 & APB2 prescaler*/
-	LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
-	LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
-
-	//update global variable SystemCoreClock --> give access to CPU clock frequency.
-	LL_SetSystemCoreClock(24000000);
+	  //update global variable SystemCoreClock --> give access to CPU clock frequency.
+	  LL_SetSystemCoreClock(24000000);
 }
+//
+//void SystemClock_Config_Expe2()
+//{
+//	/* MSI configuration and activation */
+//	LL_RCC_MSI_Enable();
+//	while	(LL_RCC_MSI_IsReady() != 1)
+//		{ }
+//
+//	/* Flash Latency + Voltage Scaling */
+//	LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
+//	LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+//
+//	//ne pas activer ni sélectionner comme source système la PLL
+//
+//
+//    //changer la fréquence du MSI, en changeant de "Range"
+//	//changer le code de 4 bits dans MSISRANGE[3:0] (registre RCC->CR)
+//	RCC->CR &= ~(0xFF <<4);
+//	RCC->CR |= (0x1001 <<4); //24MHz
+//
+//	//mettre a 1 le bit MSIRGSEL dans le même registre
+//	RCC->CR &= ~(1 <<3);
+//	RCC->CR |= (1 <<3);
+//
+//	//connecter SysClk sur MSI meme si normalement deja fait
+//	LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_MSI); //change la source sur MSI
+//	while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_MSI) {} //attend stabilisation de l'horloge avant de faire dautres operations
+//
+//	/* Set APB1 & APB2 prescaler*/
+//	LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
+//	LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
+//
+//	//update global variable SystemCoreClock --> give access to CPU clock frequency.
+//	LL_SetSystemCoreClock(24000000);
+//}
 
 void SystemClock_Config_ExpeReste()
 {
