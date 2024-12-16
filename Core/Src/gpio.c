@@ -105,7 +105,6 @@ int BLUE_BUTTON()
 	return ( !LL_GPIO_IsInputPinSet(User_Button_GPIO_Port, User_Button_Pin) );
 }
 
-
 //testing pin fonction
 void SetPinForDuration(GPIO_TypeDef *port, uint32_t pin, uint32_t duration_ms)
 {

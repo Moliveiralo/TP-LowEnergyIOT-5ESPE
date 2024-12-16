@@ -36,6 +36,5 @@ void GPIO_init(void);
 // utilisation
 void LED_GREEN( int val );
 int BLUE_BUTTON();
-
 //test pin
 //void SetPinForDuration(GPIO_TypeDef *port, uint32_t pin, uint32_t duration_ms);
