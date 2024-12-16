@@ -55,6 +55,9 @@ void SystemClock_Config_80M()
 
 	//update global variable SystemCoreClock --> give access to CPU clock frequency.
 	LL_SetSystemCoreClock(80000000);
+	LL_Init1msTick(80000000);
+
+	LL_RCC_SetUSARTClockSource(LL_RCC_USART2_CLKSOURCE_PCLK1);
 }
 
 
